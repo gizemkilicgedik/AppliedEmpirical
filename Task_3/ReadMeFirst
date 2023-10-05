@@ -1,0 +1,27 @@
+This folder contains the following documents & subfolders:
+
+
+*Raw Folder
+	This folder consists of the raw data from World Values Survey Wave 6 and the codebook for this dataset.
+
+*Build Folder
+	It consist of ”Code” subfolder: 
+
+		-”Code” contains the do file for the data cleaning.
+
+*Analysis Folder
+	This folder contains ”Data”, “Code” and ”Results” subfolders:
+
+		-”Data” consists of two data files: “WV6_Data_NON_NOR.dta” is the data with non-normalized values,  “WV6_Data_NOR.dta” is the data with normalized values.
+
+		-In the “Code” subfile, there is the do file for the cluster and principal component analyses.
+
+		-“Results” consists of “graphs” which has the cluster and pca for normalized and non-normalized data.
+
+*Communications Folder
+	It has “Logs” and “Results” subfiles.
+
+		-“Logs” contains the log files for data cleaning and analysis.
+
+		-“Results” contains all created graphs, and also a pdf file that summarizes the results.
+
