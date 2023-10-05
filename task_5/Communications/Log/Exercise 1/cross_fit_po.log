@@ -1,0 +1,2215 @@
+----------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_5/cr
+> oss_fit_po.log
+  log type:  text
+ opened on:   3 Oct 2023, 22:31:20
+
+. 
+. //cross_fit_po.do
+. 
+. //Gizem Kilicgedik      October 3, 2023
+. 
+. //This is the do file for cross-fit partial out exercise (exercise 1
+> ) in Task 5. In this exercise, the goal is to employ the cross-fit p
+> artial approach to estimate the impact of an unemployment insurance 
+> program on the duration of time individuals spend without a job.
+. 
+.         version 17
+
+.         clear all
+
+.         macro drop _all
+
+.         set linesize 70  
+
+.         set more off
+
+.         set mem 500m
+set memory ignored.
+    Memory no longer needs to be set in modern Statas; memory
+    adjustments are performed on the fly automatically.
+
+.         set seed 19940103
+
+. 
+. *setting global directory path here
+. 
+.         global path "/Users/gizemkilicgedik/Desktop/AppliedEmpirical
+> /task_5"
+
+.         cd "$path" 
+/Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_5
+
+. 
+. *setting input and output path
+. 
+.         global inputpath "Raw"
+
+.         global outputpath "Analysis/Output"
+
+.         
+. *importing the dataset 
+.         
+.         use "$inputpath/penn_jae.dta", clear
+
+.         drop muld-v26
+
+. 
+. /*** Exercise 1a: cross-fit partialing out with plug-in parameters *
+> **/
+. 
+. * Generating interaction and square variables
+. 
+. local v = ""
+
+. generate vars = ""
+(13,913 missing values generated)
+
+. 
+. local varlist female black hispanic othrace dep q1 q2 q3 q4 v14 q5 q
+> 6 recall ///
+> agelt35 agegt54 durable nondurable lusd husd
+
+. 
+. foreach var1 of local varlist {     
+  2.         generate `var1'_squared = `var1'^2                       
+>                                                                
+  3.         replace vars = "`v'" + " " + "`var1'"
+  4.         local v = vars[1]
+  5.         di `v'
+  6.         foreach var2 of local varlist {    
+  7.                 if strpos("`v'", "`var2'") == 0 {
+  8.                 gen `var1'_x_`var2' = `var1' * `var2'   
+  9.                 }
+ 10.                 else {
+ 11.         display "This is a repeated variable"
+ 12.                 }       
+ 13.         }
+ 14. }
+variable vars was str1 now str7
+(13,913 real changes made)
+0
+This is a repeated variable
+variable vars was str7 now str13
+(13,913 real changes made)
+00
+This is a repeated variable
+This is a repeated variable
+variable vars was str13 now str22
+(13,913 real changes made)
+000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str22 now str30
+(13,913 real changes made)
+0000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str30 now str34
+(13,913 real changes made)
+00002
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str34 now str37
+(13,913 real changes made)
+000020
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str37 now str40
+(13,913 real changes made)
+0000200
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str40 now str43
+(13,913 real changes made)
+00002000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str43 now str46
+(13,913 real changes made)
+000020000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str46 now str50
+(13,913 real changes made)
+0000200001
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str50 now str53
+(13,913 real changes made)
+00002000010
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str53 now str56
+(13,913 real changes made)
+000020000100
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str56 now str63
+(13,913 real changes made)
+0000200001000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str63 now str71
+(13,913 real changes made)
+00002000010000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str71 now str79
+(13,913 real changes made)
+000020000100000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str79 now str87
+(13,913 real changes made)
+0000200001000000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str87 now str98
+(13,913 real changes made)
+00002000010000000
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str98 now str103
+(13,913 real changes made)
+000020000100000001
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+variable vars was str103 now str108
+(13,913 real changes made)
+0000200001000000010
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+This is a repeated variable
+
+. 
+. drop vars
+
+. 
+. * Creating the treatment dummy 
+. 
+. gen d = 0
+
+. replace d = 1 if tg == 4 | tg == 6
+(3,030 real changes made)
+
+. drop if tg == 1 | tg == 2 | tg == 3 | tg == 5
+(7,529 observations deleted)
+
+. 
+. label var d "Treated"
+
+. 
+. * Generating the outcome variables
+. 
+. gen y = log(inuidur1)
+
+. 
+. order y female- husd_squared
+
+. 
+. * Carrying out the cross fit partial out method using the plug-in pa
+> rameter
+. 
+. eststo clear
+
+. 
+. eststo: xporegress y d, controls(female-husd_squared) xfolds(5) resa
+> mple(15) selection(plugin)
+
+Resample 1 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 1 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 1 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 1 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 1 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Cross-fit partialing-out             Number of obs                =   
+>    6,384
+linear model                         Number of controls           =   
+>      209
+                                     Number of selected controls  =   
+>       31
+                                     Number of folds in cross-fit =   
+>        5
+                                     Number of resamples          =   
+>       15
+                                     Wald chi2(1)                 =   
+>     9.32
+                                     Prob > chi2                  =   
+>   0.0023
+
+----------------------------------------------------------------------
+> --------
+             |               Robust
+           y | Coefficient  std. err.      z    P>|z|     [95% conf. i
+> nterval]
+-------------+--------------------------------------------------------
+> --------
+           d |  -.0922864    .030235    -3.05   0.002    -.1515459   -
+> .0330269
+----------------------------------------------------------------------
+> --------
+Note: Chi-squared test is a Wald test of the coefficients of the variables
+      of interest jointly equal to zero. Lassos select controls for model
+      estimation. Type lassoinfo to see number of selected variables in each
+      lasso.
+(est1 stored)
+
+. estadd local para "Plug in"     
+
+added macro:
+               e(para) : "Plug in"
+
+. estadd local vars "No"
+
+added macro:
+               e(vars) : "No"
+
+. 
+. 
+. /*** Exercise 1b: Always including raw covariates ***/
+. 
+. eststo: xporegress y d, controls((female-husd) female-husd_squared) 
+> xfolds(5) resample(15) selection(plugin)
+
+Resample 1 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 1 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 1 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 1 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 1 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 2 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 2 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 2 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 2 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 2 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 3 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 3 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 3 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 3 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 3 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 4 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 4 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 4 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 4 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 4 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 5 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 5 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 5 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 5 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 5 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 6 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 6 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 6 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 6 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 6 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 7 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 7 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 7 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 7 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 7 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 8 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 8 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 8 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 8 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 8 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 9 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 9 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 9 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 9 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 9 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 10 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 10 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 10 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 10 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 10 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 11 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 11 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 11 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 11 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 11 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 12 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 12 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 12 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 12 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 12 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 13 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 13 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 13 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 13 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 13 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 14 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 14 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 14 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 14 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 14 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 15 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 15 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 15 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 15 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Resample 15 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+.note: q5 omitted because of collinearity.
+note: female black hispanic othrace dep q1 q2 q3 q4 v14 o.q5 q6
+      recall agelt35 agegt54 durable nondurable lusd husd specified
+      as alwaysvar and othervar; assumed to be alwaysvar and always
+      selected.
+
+
+Cross-fit partialing-out             Number of obs                =   
+>    6,384
+linear model                         Number of controls           =   
+>      209
+                                     Number of selected controls  =   
+>       21
+                                     Number of folds in cross-fit =   
+>        5
+                                     Number of resamples          =   
+>       15
+                                     Wald chi2(1)                 =   
+>     8.28
+                                     Prob > chi2                  =   
+>   0.0040
+
+----------------------------------------------------------------------
+> --------
+             |               Robust
+           y | Coefficient  std. err.      z    P>|z|     [95% conf. i
+> nterval]
+-------------+--------------------------------------------------------
+> --------
+           d |  -.0863571   .0300155    -2.88   0.004    -.1451864   -
+> .0275277
+----------------------------------------------------------------------
+> --------
+Note: Chi-squared test is a Wald test of the coefficients of the variables
+      of interest jointly equal to zero. Lassos select controls for model
+      estimation. Type lassoinfo to see number of selected variables in each
+      lasso.
+(est2 stored)
+
+. estadd local para "Plug in"     
+
+added macro:
+               e(para) : "Plug in"
+
+. estadd local vars "Yes"
+
+added macro:
+               e(vars) : "Yes"
+
+. 
+. /*** Exercise 1c: Cross-fit partialing out with cross-validation ***
+> /
+. 
+. eststo: xporegress y d, controls(female-husd_squared) xfolds(5) resa
+> mple(15) selection(cv)
+
+Resample 1 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 1 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 1 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 1 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 1 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 2 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 3 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 4 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 5 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 6 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 7 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 8 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 9 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 10 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 11 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 12 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 13 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 14 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 1 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 2 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 3 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 4 of 5 ...
+Estimating lassos: 1.
+
+Resample 15 of 15 ...
+Cross-fit fold 5 of 5 ...
+Estimating lassos: 1.
+
+Cross-fit partialing-out             Number of obs                =   
+>    6,384
+linear model                         Number of controls           =   
+>      209
+                                     Number of selected controls  =   
+>      169
+                                     Number of folds in cross-fit =   
+>        5
+                                     Number of resamples          =   
+>       15
+                                     Wald chi2(1)                 =   
+>    10.17
+                                     Prob > chi2                  =   
+>   0.0014
+
+----------------------------------------------------------------------
+> --------
+             |               Robust
+           y | Coefficient  std. err.      z    P>|z|     [95% conf. i
+> nterval]
+-------------+--------------------------------------------------------
+> --------
+           d |   -.096105   .0301294    -3.19   0.001    -.1551575   -
+> .0370525
+----------------------------------------------------------------------
+> --------
+Note: Chi-squared test is a Wald test of the coefficients of the variables
+      of interest jointly equal to zero. Lassos select controls for model
+      estimation. Type lassoinfo to see number of selected variables in each
+      lasso.
+(est3 stored)
+
+. estadd local para "CV"  
+
+added macro:
+               e(para) : "CV"
+
+. estadd local vars "No"
+
+added macro:
+               e(vars) : "No"
+
+. 
+. /*** Output Table ***/
+. 
+. file open myfile using "$outputpath/cross_fit_po.tex", write replace
+
+. file write myfile "\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}"
+
+. file write myfile "\hline"
+
+. file write myfile "\hline"
+
+. file write myfile "\begin{tabular}{l c c c}"
+
+. file write myfile " & (1) & (2) & (3) \\  "
+
+. file write myfile "\hline"
+
+. file write myfile "\hline"
+
+. file close myfile
+
+.         
+. esttab using "$outputpath/cross_fit_po.tex" , append  b(4) se(4)  la
+> bel noconstant booktabs ///
+> star(* 0.10 ** 0.05 *** 0.01) ///
+> fragment keep(d) ///
+> nonumbers nodepvars nomtitles nonotes noobs ///
+> order(d) ///
+> scalars("para Plug in or CV" "vars Force raw vars") ///
+> sfmt(2)
+(output written to Analysis/Output/cross_fit_po.tex)
+
+. 
+. cap file close _all
+
+. file open myfile using "$outputpath/cross_fit_po.tex", write append
+
+. file write myfile "\hline"
+
+. file write myfile "\hline"
+
+. file write myfile " \end{tabular} "
+
+. file close myfile
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_5/cr
+> oss_fit_po.log
+  log type:  text
+ closed on:   3 Oct 2023, 22:40:03
+----------------------------------------------------------------------
