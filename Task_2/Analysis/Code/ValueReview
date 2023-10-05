@@ -1,0 +1,21 @@
+***********************************
+**** Task 2 
+**** Value Review
+**** Gizem Kilicgedik
+**** Date: 12 September 2023
+***********************************
+	
+
+
+	set more off
+	
+	clear all
+	
+	do "/Users/gizemkilicgedik/Desktop/Applied Empirical/task 2/Build/Code/programs.do"
+
+	valuereview using "/Users/gizemkilicgedik/Desktop/Applied Empirical/task 2/Build/Input/NEW7080.dta", numericfile("/Users/gizemkilicgedik/Desktop/Applied Empirical/task 2/Analysis/Output/AK91_ValueReview.tex")
+	
+	valuereview using "/Users/gizemkilicgedik/Desktop/Applied Empirical/task 2/Build/Input/final4.dta", numericfile("/Users/gizemkilicgedik/Desktop/Applied Empirical/task 2/Analysis/Output/AL99_Grade4_ValueReview.tex")
+	
+	valuereview using "/Users/gizemkilicgedik/Desktop/Applied Empirical/task 2/Build/Input/final5.dta", numericfile("/Users/gizemkilicgedik/Desktop/Applied Empirical/task 2/Analysis/Output/AL99_Grade5_ValueReview.tex")
+	
