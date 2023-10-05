@@ -1,0 +1,5 @@
+In the ”Build” file, in the “input” subfolder, you can find the data for the Angrist & Krueger, 1991. The do files for the tables are located in the “code” subfolder.
+
+In the “Analysis” file, in the “code” subfolder, there are do files for the tables IV, V, VI. The “output” file contains the log files that shows the tables.
+
+The project map can be founded in the excel file named “Project Map_Task 1”
