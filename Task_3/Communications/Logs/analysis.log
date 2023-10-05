@@ -1,0 +1,1800 @@
+----------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/an
+> alysis.log
+  log type:  text
+ opened on:  20 Sep 2023, 09:30:19
+
+. 
+. //analysis.do
+. 
+. //Gizem Kilicgedik Septermber 20, 2023
+. 
+. //This is to try out unsupervised learning using WVS6(cleaned). Firs
+> t goal is to use cluster analysis to try out which questions natural
+> ly belong together and which countries naturally belong together. Th
+> e second one is to use principal component analysis to find how answ
+> ers to different questions covaries.
+. 
+.         version 17
+
+.         clear all
+
+.         macro drop _all
+
+.         set linesize 70 
+
+.         
+. //setting global directory path here
+.         global path "/Users/gizemkilicgedik/Desktop/AppliedEmpirical
+> /task_3"
+
+.         cd "$path" 
+/Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3
+
+. 
+. //setting input and output path
+.         global inputpath "Analysis/Data"
+
+.         global outputpath "Analysis/Results"
+
+.         global NON_NOR "Non-normalized"
+
+.         global NOR "Normalized"
+
+.         
+. //installing the packages needed
+.         ssc install sxpose2, replace
+checking sxpose2 consistency and verifying not already installed...
+all files already exist and are up to date.
+
+.         ssc install sepscatter, replace 
+checking sepscatter consistency and verifying not already installed...
+all files already exist and are up to date.
+
+.         ssc install texsave,replace
+checking texsave consistency and verifying not already installed...
+all files already exist and are up to date.
+
+.         
+. //CLUSTER ANALYSIS
+. 
+. foreach J in NON_NOR NOR { // Doing both non-normalized and normaliz
+> ed datasets
+  2. 
+.         use "$inputpath/WV6_Data_`J'.dta", clear
+  3. 
+. 
+. ///Cluster analysis for questions
+>         preserve
+  4.         drop countryID COW
+  5. 
+. //Transposing the dataset
+.         sxpose2, clear firstnames destring varname varlabel force
+  6. 
+.         rename _varname questions
+  7.         rename _varlabel details
+  8.         
+. //Cluster analysis 
+.         forval i = 2/10 {
+  9.                 set seed 19940103
+ 10.                 qui ds, has(type double)
+ 11.                 cluster kmeans `r(varlist)', k(`i') gen(group`i')
+>  name(Cluster`i')
+ 12.         }
+ 13. 
+. //Generating mean of each questions and groups
+.         ds, has(type double)
+ 14.         egen questionmean = rowmean(`r(varlist)')
+ 15. 
+. //Setting random number (for graphical analysis purpose)
+.         gen group1 = 1
+ 16.         forval i = 1/10 {
+ 17.                 sort group`i' questions
+ 18.                 gen number`i' = _n
+ 19.         }
+ 20. 
+. //Graphical analysis
+.         forval i = 1/10 {
+ 21.                 sepscatter number`i' questionmean, separate(group
+> `i') xlabel(none) ///
+>                                 ylabel(none) graphregion(color(white
+> )) ytitle("") xtitle("") ///
+>                                 legend(subtitle("Cluster") ring(0) r
+> ow(2) pos(5) region(color(none))) ///
+>                                 title("Cluster Analysis of Questions
+>  ($`J'): K = `i'")
+ 22.                 graph export "$outputpath/Graphs/$`J'/CA_Question
+> K`i'_`J'.png", replace
+ 23.         }
+ 24.         
+. //Table of groups and questions
+.         sort group5 questions
+ 25.         gen groupname = "Politics" if group5 == 1
+ 26.         replace groupname = "Life security" if group5 == 2
+ 27.         replace groupname = "Life importance" if group5 == 3
+ 28.         replace groupname = "Democracy and freedom" if group5 == 
+> 4
+ 29.         replace groupname = "Traditional values" if group5 == 5
+ 30. 
+.         order groupname, after(group5)
+ 31.         la var group5 "Group ID"
+ 32.         la var groupname "Group"
+ 33.         la var questions "Question Code"
+ 34.         la var details "Question"
+ 35. 
+.         texsave group5 groupname questions details using "$outputpat
+> h/Tables/$`J'/CA_QuestionsK5_`J'.tex", varlabels replace
+ 36. 
+.         restore
+ 37. 
+. ///Cluster analysis of countries
+> //Cluster Analysis
+.         forval i = 2/10 {
+ 38.         set seed 19940103
+ 39.         qui ds, has(type float)
+ 40.         cluster kmeans `r(varlist)', k(`i') gen(group`i') name(Co
+> untry`i')
+ 41.         }
+ 42. 
+. //Generating mean of each questions and groups
+.         ds, has(type float)
+ 43.         egen countrymean = rowmean(`r(varlist)')
+ 44. 
+. //Setting random number (for graphical analysis purpose)
+.         gen group1 = 1
+ 45.         forval i = 1/10 {
+ 46.                 sort group`i' countryID
+ 47.                 gen number`i' = _n
+ 48.         }
+ 49. 
+. //Graphical analysis
+.         forval i = 1/10 {
+ 50.                 sepscatter number`i' countrymean, separate(group`
+> i')  ///
+>                                 ylabel(none) graphregion(color(white
+> )) ytitle("") xtitle("Country Mean") ///
+>                                 title("Cluster Analysis of Country (
+> $`J'): K = `i'") mylabel(country)
+ 51.                 graph export "$outputpath/Graphs/$`J'/CA_CountryK
+> `i'_`J'.png", replace
+ 52.         }
+ 53. 
+. }
+Number of observations (_N) was 60, now 83.
+Algeria: all characters numeric; replaced as double
+Azerbaijan: all characters numeric; replaced as double
+Argentina: all characters numeric; replaced as double
+Australia: all characters numeric; replaced as double
+Armenia: all characters numeric; replaced as double
+Brazil: all characters numeric; replaced as double
+Belarus: all characters numeric; replaced as double
+Chile: all characters numeric; replaced as double
+China: all characters numeric; replaced as double
+TaiwanROC: all characters numeric; replaced as double
+Colombia: all characters numeric; replaced as double
+Cyprus: all characters numeric; replaced as double
+Ecuador: all characters numeric; replaced as double
+Estonia: all characters numeric; replaced as double
+Georgia: all characters numeric; replaced as double
+Palestine: all characters numeric; replaced as double
+Germany: all characters numeric; replaced as double
+Ghana: all characters numeric; replaced as double
+Haiti: all characters numeric; replaced as double
+HongKongSAR: all characters numeric; replaced as double
+India: all characters numeric; replaced as double
+Iraq: all characters numeric; replaced as double
+Japan: all characters numeric; replaced as double
+Kazakhstan: all characters numeric; replaced as double
+Jordan: all characters numeric; replaced as double
+SouthKorea: all characters numeric; replaced as double
+Kuwait: all characters numeric; replaced as double
+Kyrgyzstan: all characters numeric; replaced as double
+Lebanon: all characters numeric; replaced as double
+Libya: all characters numeric; replaced as double
+Malaysia: all characters numeric; replaced as double
+Mexico: all characters numeric; replaced as double
+Morocco: all characters numeric; replaced as double
+Netherlands: all characters numeric; replaced as double
+NewZealand: all characters numeric; replaced as double
+Nigeria: all characters numeric; replaced as double
+Pakistan: all characters numeric; replaced as double
+Peru: all characters numeric; replaced as double
+Philippines: all characters numeric; replaced as double
+Poland: all characters numeric; replaced as double
+Qatar: all characters numeric; replaced as double
+Romania: all characters numeric; replaced as double
+Russia: all characters numeric; replaced as double
+Rwanda: all characters numeric; replaced as double
+Singapore: all characters numeric; replaced as double
+Slovenia: all characters numeric; replaced as double
+SouthAfrica: all characters numeric; replaced as double
+Zimbabwe: all characters numeric; replaced as double
+Spain: all characters numeric; replaced as double
+Sweden: all characters numeric; replaced as double
+Thailand: all characters numeric; replaced as double
+TrinidadTobago: all characters numeric; replaced as double
+Tunisia: all characters numeric; replaced as double
+Turkey: all characters numeric; replaced as double
+Ukraine: all characters numeric; replaced as double
+Egypt: all characters numeric; replaced as double
+UnitedStates: all characters numeric; replaced as double
+Uruguay: all characters numeric; replaced as double
+Uzbekistan: all characters numeric; replaced as double
+Yemen: all characters numeric; replaced as double
+___000vlist: contains nonnumeric bytes; no replace
+___000vlist1: contains nonnumeric bytes; no replace
+___000vlist2: contains nonnumeric bytes; no replace
+___000vlist3: contains nonnumeric bytes; no replace
+___000vlist4: contains nonnumeric bytes; no replace
+___000vlist5: contains nonnumeric bytes; no replace
+___000vlist6: contains nonnumeric bytes; no replace
+___000vlist7: contains nonnumeric bytes; no replace
+___000vlist8: contains nonnumeric bytes; no replace
+___000vlist9: contains nonnumeric bytes; no replace
+___000vlist10: contains nonnumeric bytes; no replace
+___000vlist11: contains nonnumeric bytes; no replace
+___000vlist12: contains nonnumeric bytes; no replace
+___000vlist13: contains nonnumeric bytes; no replace
+___000vlist14: contains nonnumeric bytes; no replace
+___000vlist15: contains nonnumeric bytes; no replace
+___000vlist16: contains nonnumeric bytes; no replace
+___000vlist17: contains nonnumeric bytes; no replace
+___000vlist18: contains nonnumeric bytes; no replace
+___000vlist19: contains nonnumeric bytes; no replace
+___000vlist20: contains nonnumeric bytes; no replace
+___000vlist21: contains nonnumeric bytes; no replace
+___000vlist22: contains nonnumeric bytes; no replace
+___000vlist23: contains nonnumeric bytes; no replace
+___000vlist24: contains nonnumeric bytes; no replace
+___000vlist25: contains nonnumeric bytes; no replace
+___000vlist26: contains nonnumeric bytes; no replace
+___000vlist27: contains nonnumeric bytes; no replace
+___000vlist28: contains nonnumeric bytes; no replace
+___000vlist29: contains nonnumeric bytes; no replace
+___000vlist30: contains nonnumeric bytes; no replace
+___000vlist31: contains nonnumeric bytes; no replace
+___000vlist32: contains nonnumeric bytes; no replace
+___000vlist33: contains nonnumeric bytes; no replace
+___000vlist34: contains nonnumeric bytes; no replace
+___000vlist35: contains nonnumeric bytes; no replace
+___000vlist36: contains nonnumeric bytes; no replace
+___000vlist37: contains nonnumeric bytes; no replace
+___000vlist38: contains nonnumeric bytes; no replace
+___000vlist39: contains nonnumeric bytes; no replace
+___000vlist40: contains nonnumeric bytes; no replace
+___000vlist41: contains nonnumeric bytes; no replace
+___000vlist42: contains nonnumeric bytes; no replace
+___000vlist43: contains nonnumeric bytes; no replace
+___000vlist44: contains nonnumeric bytes; no replace
+___000vlist45: contains nonnumeric bytes; no replace
+___000vlist46: contains nonnumeric bytes; no replace
+___000vlist47: contains nonnumeric bytes; no replace
+___000vlist48: contains nonnumeric bytes; no replace
+___000vlist49: contains nonnumeric bytes; no replace
+___000vlist50: contains nonnumeric bytes; no replace
+___000vlist51: contains nonnumeric bytes; no replace
+___000vlist52: contains nonnumeric bytes; no replace
+___000vlist53: contains nonnumeric bytes; no replace
+___000vlist54: contains nonnumeric bytes; no replace
+___000vlist55: contains nonnumeric bytes; no replace
+___000vlist56: contains nonnumeric bytes; no replace
+___000vlist57: contains nonnumeric bytes; no replace
+___000vlist58: contains nonnumeric bytes; no replace
+___000vlist59: contains nonnumeric bytes; no replace
+___000vlist60: contains nonnumeric bytes; no replace
+___000vlist61: contains nonnumeric bytes; no replace
+___000vlist62: contains nonnumeric bytes; no replace
+___000vlist63: contains nonnumeric bytes; no replace
+___000vlist64: contains nonnumeric bytes; no replace
+___000vlist65: contains nonnumeric bytes; no replace
+___000vlist66: contains nonnumeric bytes; no replace
+___000vlist67: contains nonnumeric bytes; no replace
+___000vlist68: contains nonnumeric bytes; no replace
+___000vlist69: contains nonnumeric bytes; no replace
+___000vlist70: contains nonnumeric bytes; no replace
+___000vlist71: contains nonnumeric bytes; no replace
+___000vlist72: contains nonnumeric bytes; no replace
+___000vlist73: contains nonnumeric bytes; no replace
+___000vlist74: contains nonnumeric bytes; no replace
+___000vlist75: contains nonnumeric bytes; no replace
+___000vlist76: contains nonnumeric bytes; no replace
+___000vlist77: contains nonnumeric bytes; no replace
+___000vlist78: contains nonnumeric bytes; no replace
+___000vlist79: contains nonnumeric bytes; no replace
+___000vlist80: contains nonnumeric bytes; no replace
+___000vlist81: contains nonnumeric bytes; no replace
+___000vlist82: contains nonnumeric bytes; no replace
+___000vlist83: contains nonnumeric bytes; no replace
+_varname: contains nonnumeric bytes; no replace
+_varlabel: contains nonnumeric bytes; no replace
+Algeria       Ecuador       Jordan        Pakistan      Spain
+Azerbaijan    Estonia       SouthKorea    Peru          Sweden
+Argentina     Georgia       Kuwait        Philippines   Thailand
+Australia     Palestine     Kyrgyzstan    Poland        TrinidadTo~o
+Armenia       Germany       Lebanon       Qatar         Tunisia
+Brazil        Ghana         Libya         Romania       Turkey
+Belarus       Haiti         Malaysia      Russia        Ukraine
+Chile         HongKongSAR   Mexico        Rwanda        Egypt
+China         India         Morocco       Singapore     UnitedStates
+TaiwanROC     Iraq          Netherlands   Slovenia      Uruguay
+Colombia      Japan         NewZealand    SouthAfrica   Uzbekistan
+Cyprus        Kazakhstan    Nigeria       Zimbabwe      Yemen
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK1_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK2_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK3_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK4_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK5_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK6_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK7_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK8_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK9_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_QuestionK10_NON_NOR.png saved
+    as PNG format
+(51 missing values generated)
+variable groupname was str8 now str13
+(17 real changes made)
+variable groupname was str13 now str15
+(16 real changes made)
+variable groupname was str15 now str21
+(3 real changes made)
+(15 real changes made)
+V4    V49   V71   V96   V111  V122  V136  V171  V189  V197  V209
+V5    V51   V72   V97   V113  V123  V137  V173  V190  V198  V210
+V6    V52   V73   V98   V114  V124  V138  V174  V191  V199
+V7    V53   V75   V99   V115  V126  V139  V181  V192  V200
+V8    V54   V76   V100  V117  V131  V153  V182  V193  V202
+V9    V55   V77   V101  V119  V132  V155  V183  V194  V205
+V10   V59   V78   V108  V120  V133  V156  V184  V195  V207
+V11   V70   V79   V110  V121  V134  V170  V188  V196  V208
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK1_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK2_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK3_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK4_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK5_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK6_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK7_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK8_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK9_NON_NOR.png saved
+    as PNG format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/CA_CountryK10_NON_NOR.png saved
+    as PNG format
+Number of observations (_N) was 60, now 83.
+Algeria: all characters numeric; replaced as double
+Azerbaijan: all characters numeric; replaced as double
+Argentina: all characters numeric; replaced as double
+Australia: all characters numeric; replaced as double
+Armenia: all characters numeric; replaced as double
+Brazil: all characters numeric; replaced as double
+Belarus: all characters numeric; replaced as double
+Chile: all characters numeric; replaced as double
+China: all characters numeric; replaced as double
+TaiwanROC: all characters numeric; replaced as double
+Colombia: all characters numeric; replaced as double
+Cyprus: all characters numeric; replaced as double
+Ecuador: all characters numeric; replaced as double
+Estonia: all characters numeric; replaced as double
+Georgia: all characters numeric; replaced as double
+Palestine: all characters numeric; replaced as double
+Germany: all characters numeric; replaced as double
+Ghana: all characters numeric; replaced as double
+Haiti: all characters numeric; replaced as double
+HongKongSAR: all characters numeric; replaced as double
+India: all characters numeric; replaced as double
+Iraq: all characters numeric; replaced as double
+Japan: all characters numeric; replaced as double
+Kazakhstan: all characters numeric; replaced as double
+Jordan: all characters numeric; replaced as double
+SouthKorea: all characters numeric; replaced as double
+Kuwait: all characters numeric; replaced as double
+Kyrgyzstan: all characters numeric; replaced as double
+Lebanon: all characters numeric; replaced as double
+Libya: all characters numeric; replaced as double
+Malaysia: all characters numeric; replaced as double
+Mexico: all characters numeric; replaced as double
+Morocco: all characters numeric; replaced as double
+Netherlands: all characters numeric; replaced as double
+NewZealand: all characters numeric; replaced as double
+Nigeria: all characters numeric; replaced as double
+Pakistan: all characters numeric; replaced as double
+Peru: all characters numeric; replaced as double
+Philippines: all characters numeric; replaced as double
+Poland: all characters numeric; replaced as double
+Qatar: all characters numeric; replaced as double
+Romania: all characters numeric; replaced as double
+Russia: all characters numeric; replaced as double
+Rwanda: all characters numeric; replaced as double
+Singapore: all characters numeric; replaced as double
+Slovenia: all characters numeric; replaced as double
+SouthAfrica: all characters numeric; replaced as double
+Zimbabwe: all characters numeric; replaced as double
+Spain: all characters numeric; replaced as double
+Sweden: all characters numeric; replaced as double
+Thailand: all characters numeric; replaced as double
+TrinidadTobago: all characters numeric; replaced as double
+Tunisia: all characters numeric; replaced as double
+Turkey: all characters numeric; replaced as double
+Ukraine: all characters numeric; replaced as double
+Egypt: all characters numeric; replaced as double
+UnitedStates: all characters numeric; replaced as double
+Uruguay: all characters numeric; replaced as double
+Uzbekistan: all characters numeric; replaced as double
+Yemen: all characters numeric; replaced as double
+___000vlist: contains nonnumeric bytes; no replace
+___000vlist1: contains nonnumeric bytes; no replace
+___000vlist2: contains nonnumeric bytes; no replace
+___000vlist3: contains nonnumeric bytes; no replace
+___000vlist4: contains nonnumeric bytes; no replace
+___000vlist5: contains nonnumeric bytes; no replace
+___000vlist6: contains nonnumeric bytes; no replace
+___000vlist7: contains nonnumeric bytes; no replace
+___000vlist8: contains nonnumeric bytes; no replace
+___000vlist9: contains nonnumeric bytes; no replace
+___000vlist10: contains nonnumeric bytes; no replace
+___000vlist11: contains nonnumeric bytes; no replace
+___000vlist12: contains nonnumeric bytes; no replace
+___000vlist13: contains nonnumeric bytes; no replace
+___000vlist14: contains nonnumeric bytes; no replace
+___000vlist15: contains nonnumeric bytes; no replace
+___000vlist16: contains nonnumeric bytes; no replace
+___000vlist17: contains nonnumeric bytes; no replace
+___000vlist18: contains nonnumeric bytes; no replace
+___000vlist19: contains nonnumeric bytes; no replace
+___000vlist20: contains nonnumeric bytes; no replace
+___000vlist21: contains nonnumeric bytes; no replace
+___000vlist22: contains nonnumeric bytes; no replace
+___000vlist23: contains nonnumeric bytes; no replace
+___000vlist24: contains nonnumeric bytes; no replace
+___000vlist25: contains nonnumeric bytes; no replace
+___000vlist26: contains nonnumeric bytes; no replace
+___000vlist27: contains nonnumeric bytes; no replace
+___000vlist28: contains nonnumeric bytes; no replace
+___000vlist29: contains nonnumeric bytes; no replace
+___000vlist30: contains nonnumeric bytes; no replace
+___000vlist31: contains nonnumeric bytes; no replace
+___000vlist32: contains nonnumeric bytes; no replace
+___000vlist33: contains nonnumeric bytes; no replace
+___000vlist34: contains nonnumeric bytes; no replace
+___000vlist35: contains nonnumeric bytes; no replace
+___000vlist36: contains nonnumeric bytes; no replace
+___000vlist37: contains nonnumeric bytes; no replace
+___000vlist38: contains nonnumeric bytes; no replace
+___000vlist39: contains nonnumeric bytes; no replace
+___000vlist40: contains nonnumeric bytes; no replace
+___000vlist41: contains nonnumeric bytes; no replace
+___000vlist42: contains nonnumeric bytes; no replace
+___000vlist43: contains nonnumeric bytes; no replace
+___000vlist44: contains nonnumeric bytes; no replace
+___000vlist45: contains nonnumeric bytes; no replace
+___000vlist46: contains nonnumeric bytes; no replace
+___000vlist47: contains nonnumeric bytes; no replace
+___000vlist48: contains nonnumeric bytes; no replace
+___000vlist49: contains nonnumeric bytes; no replace
+___000vlist50: contains nonnumeric bytes; no replace
+___000vlist51: contains nonnumeric bytes; no replace
+___000vlist52: contains nonnumeric bytes; no replace
+___000vlist53: contains nonnumeric bytes; no replace
+___000vlist54: contains nonnumeric bytes; no replace
+___000vlist55: contains nonnumeric bytes; no replace
+___000vlist56: contains nonnumeric bytes; no replace
+___000vlist57: contains nonnumeric bytes; no replace
+___000vlist58: contains nonnumeric bytes; no replace
+___000vlist59: contains nonnumeric bytes; no replace
+___000vlist60: contains nonnumeric bytes; no replace
+___000vlist61: contains nonnumeric bytes; no replace
+___000vlist62: contains nonnumeric bytes; no replace
+___000vlist63: contains nonnumeric bytes; no replace
+___000vlist64: contains nonnumeric bytes; no replace
+___000vlist65: contains nonnumeric bytes; no replace
+___000vlist66: contains nonnumeric bytes; no replace
+___000vlist67: contains nonnumeric bytes; no replace
+___000vlist68: contains nonnumeric bytes; no replace
+___000vlist69: contains nonnumeric bytes; no replace
+___000vlist70: contains nonnumeric bytes; no replace
+___000vlist71: contains nonnumeric bytes; no replace
+___000vlist72: contains nonnumeric bytes; no replace
+___000vlist73: contains nonnumeric bytes; no replace
+___000vlist74: contains nonnumeric bytes; no replace
+___000vlist75: contains nonnumeric bytes; no replace
+___000vlist76: contains nonnumeric bytes; no replace
+___000vlist77: contains nonnumeric bytes; no replace
+___000vlist78: contains nonnumeric bytes; no replace
+___000vlist79: contains nonnumeric bytes; no replace
+___000vlist80: contains nonnumeric bytes; no replace
+___000vlist81: contains nonnumeric bytes; no replace
+___000vlist82: contains nonnumeric bytes; no replace
+___000vlist83: contains nonnumeric bytes; no replace
+_varname: contains nonnumeric bytes; no replace
+_varlabel: contains nonnumeric bytes; no replace
+Algeria       Ecuador       Jordan        Pakistan      Spain
+Azerbaijan    Estonia       SouthKorea    Peru          Sweden
+Argentina     Georgia       Kuwait        Philippines   Thailand
+Australia     Palestine     Kyrgyzstan    Poland        TrinidadTo~o
+Armenia       Germany       Lebanon       Qatar         Tunisia
+Brazil        Ghana         Libya         Romania       Turkey
+Belarus       Haiti         Malaysia      Russia        Ukraine
+Chile         HongKongSAR   Mexico        Rwanda        Egypt
+China         India         Morocco       Singapore     UnitedStates
+TaiwanROC     Iraq          Netherlands   Slovenia      Uruguay
+Colombia      Japan         NewZealand    SouthAfrica   Uzbekistan
+Cyprus        Kazakhstan    Nigeria       Zimbabwe      Yemen
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK1_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK2_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK3_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK4_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK5_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK6_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK7_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK8_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK9_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_QuestionK10_NOR.png saved as PNG
+    format
+(54 missing values generated)
+variable groupname was str8 now str13
+(11 real changes made)
+variable groupname was str13 now str15
+(18 real changes made)
+variable groupname was str15 now str21
+(10 real changes made)
+(15 real changes made)
+V4    V49   V71   V96   V111  V122  V136  V171  V189  V197  V209
+V5    V51   V72   V97   V113  V123  V137  V173  V190  V198  V210
+V6    V52   V73   V98   V114  V124  V138  V174  V191  V199
+V7    V53   V75   V99   V115  V126  V139  V181  V192  V200
+V8    V54   V76   V100  V117  V131  V153  V182  V193  V202
+V9    V55   V77   V101  V119  V132  V155  V183  V194  V205
+V10   V59   V78   V108  V120  V133  V156  V184  V195  V207
+V11   V70   V79   V110  V121  V134  V170  V188  V196  V208
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK1_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK2_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK3_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK4_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK5_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK6_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK7_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK8_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK9_NOR.png saved as PNG
+    format
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/CA_CountryK10_NOR.png saved as PNG
+    format
+
+. 
+. //PRINCIPAL COMPONENET ANALYSIS
+. 
+. foreach J in NON_NOR NOR { // Doing both non-normalized and normaliz
+> ed dataset
+  2. 
+.         use "$inputpath/WV6_Data_`J'.dta", clear
+  3.         
+. //Principal component analysis with two components
+.         pca V*, com(2)
+  4.         
+. //Obtaining factor loading 
+.         preserve 
+  5.         
+.         matrix define A=e(L)
+  6.         svmat2 A, rnames(Q)
+  7.         gen aA1=abs(A1)
+  8.         gen aA2=abs(A2)
+  9.         gsort -aA1
+ 10.         keep Q aA1 aA2
+ 11.         
+.         tempfile factorloading
+ 12.         save `factorloading', replace
+ 13.         
+.         restore 
+ 14.         
+. //Merging the data with the factor loading
+.         reshape long V, i(countryID) j(Questions)
+ 15.         tostring Questions, gen(Q)
+ 16.         replace Q = "V"+Q
+ 17.         
+.         merge m:1 Q using `factorloading', nogen
+ 18.         
+. //Generating score for each component
+.         gen Z1 = V*aA1
+ 19.         gen Z2 = V*aA2
+ 20.         
+.         la var Z1 "First principal component"
+ 21.         la var Z2 "Second principal component"
+ 22.         
+. //Obtaining country average 
+.         sort countryID Questions
+ 23.         collapse (mean) Z1 Z2, by(country COW)
+ 24.         
+. //Clustering country 
+.         set seed 19940103
+ 25.         cluster kmeans Z1 Z2, k(5) gen(group) name(PCA)
+ 26.         
+.         la var Z1 "First principal component"
+ 27.         la var Z2 "Second principal component"
+ 28.         
+. //Culture map
+.         sepscatter Z1 Z2, separate(group) mylabel(COW) ///
+>         graphregion(color(white)) ytitle("First principal component 
+> score") ///
+>         xtitle("Second principal component score") ///
+>         title("PCA Culture Map ($`J')") 
+ 29.         
+.         graph export "$outputpath/Graphs/$`J'/PCA_CultureMap_`J'.png
+> ", replace
+ 30. 
+. }       
+
+Principal components/correlation                 Number of obs    =   
+>       60
+                                                 Number of comp.  =   
+>        2
+                                                 Trace            =   
+>       82
+    Rotation: (unrotated = principal)            Rho              =   
+>   0.3719
+
+    ------------------------------------------------------------------
+> --------
+       Component |   Eigenvalue   Difference         Proportion   Cumu
+> lative
+    -------------+----------------------------------------------------
+> --------
+           Comp1 |      18.2932      6.08864             0.2231       
+> 0.2231
+           Comp2 |      12.2046       2.8603             0.1488       
+> 0.3719
+           Comp3 |      9.34428      2.34599             0.1140       
+> 0.4859
+           Comp4 |       6.9983      2.06586             0.0853       
+> 0.5712
+           Comp5 |      4.93244      1.04765             0.0602       
+> 0.6314
+           Comp6 |      3.88478      1.07541             0.0474       
+> 0.6788
+           Comp7 |      2.80937      .181993             0.0343       
+> 0.7130
+           Comp8 |      2.62738      .670601             0.0320       
+> 0.7451
+           Comp9 |      1.95678      .248185             0.0239       
+> 0.7689
+          Comp10 |      1.70859     .0698504             0.0208       
+> 0.7898
+          Comp11 |      1.63874      .158893             0.0200       
+> 0.8097
+          Comp12 |      1.47985     .0616149             0.0180       
+> 0.8278
+          Comp13 |      1.41823      .402635             0.0173       
+> 0.8451
+          Comp14 |       1.0156     .0708412             0.0124       
+> 0.8575
+          Comp15 |      .944756     .0249611             0.0115       
+> 0.8690
+          Comp16 |      .919794      .110346             0.0112       
+> 0.8802
+          Comp17 |      .809448     .0197347             0.0099       
+> 0.8901
+          Comp18 |      .789713     .0901177             0.0096       
+> 0.8997
+          Comp19 |      .699596     .0481897             0.0085       
+> 0.9082
+          Comp20 |      .651406      .100609             0.0079       
+> 0.9162
+          Comp21 |      .550797    .00454482             0.0067       
+> 0.9229
+          Comp22 |      .546252     .0484087             0.0067       
+> 0.9296
+          Comp23 |      .497843     .0421247             0.0061       
+> 0.9356
+          Comp24 |      .455718     .0273058             0.0056       
+> 0.9412
+          Comp25 |      .428413     .0559606             0.0052       
+> 0.9464
+          Comp26 |      .372452     .0512048             0.0045       
+> 0.9510
+          Comp27 |      .321247    .00254096             0.0039       
+> 0.9549
+          Comp28 |      .318706     .0231903             0.0039       
+> 0.9588
+          Comp29 |      .295516     .0204986             0.0036       
+> 0.9624
+          Comp30 |      .275017     .0151083             0.0034       
+> 0.9657
+          Comp31 |      .259909     .0182243             0.0032       
+> 0.9689
+          Comp32 |      .241685     .0140369             0.0029       
+> 0.9718
+          Comp33 |      .227648     .0113823             0.0028       
+> 0.9746
+          Comp34 |      .216266     .0183702             0.0026       
+> 0.9772
+          Comp35 |      .197895     .0177499             0.0024       
+> 0.9797
+          Comp36 |      .180145     .0290083             0.0022       
+> 0.9819
+          Comp37 |      .151137    .00662096             0.0018       
+> 0.9837
+          Comp38 |      .144516    .00995383             0.0018       
+> 0.9855
+          Comp39 |      .134562    .00603482             0.0016       
+> 0.9871
+          Comp40 |      .128528     .0127419             0.0016       
+> 0.9887
+          Comp41 |      .115786     .0123578             0.0014       
+> 0.9901
+          Comp42 |      .103428     .0144102             0.0013       
+> 0.9913
+          Comp43 |     .0890176     .0014417             0.0011       
+> 0.9924
+          Comp44 |     .0875759    .00828718             0.0011       
+> 0.9935
+          Comp45 |     .0792887     .0101849             0.0010       
+> 0.9945
+          Comp46 |     .0691038     .0113376             0.0008       
+> 0.9953
+          Comp47 |     .0577662    .00259821             0.0007       
+> 0.9960
+          Comp48 |      .055168    .00618937             0.0007       
+> 0.9967
+          Comp49 |     .0489786    .00390578             0.0006       
+> 0.9973
+          Comp50 |     .0450728    .00666554             0.0005       
+> 0.9978
+          Comp51 |     .0384073    .00599507             0.0005       
+> 0.9983
+          Comp52 |     .0324122    .00559706             0.0004       
+> 0.9987
+          Comp53 |     .0268151    .00614166             0.0003       
+> 0.9990
+          Comp54 |     .0206735    .00191805             0.0003       
+> 0.9993
+          Comp55 |     .0187554    .00511876             0.0002       
+> 0.9995
+          Comp56 |     .0136367    .00123367             0.0002       
+> 0.9997
+          Comp57 |      .012403    .00426585             0.0002       
+> 0.9998
+          Comp58 |    .00813715    .00165936             0.0001       
+> 0.9999
+          Comp59 |    .00647779    .00647779             0.0001       
+> 1.0000
+          Comp60 |            0            0             0.0000       
+> 1.0000
+          Comp61 |            0            0             0.0000       
+> 1.0000
+          Comp62 |            0            0             0.0000       
+> 1.0000
+          Comp63 |            0            0             0.0000       
+> 1.0000
+          Comp64 |            0            0             0.0000       
+> 1.0000
+          Comp65 |            0            0             0.0000       
+> 1.0000
+          Comp66 |            0            0             0.0000       
+> 1.0000
+          Comp67 |            0            0             0.0000       
+> 1.0000
+          Comp68 |            0            0             0.0000       
+> 1.0000
+          Comp69 |            0            0             0.0000       
+> 1.0000
+          Comp70 |            0            0             0.0000       
+> 1.0000
+          Comp71 |            0            0             0.0000       
+> 1.0000
+          Comp72 |            0            0             0.0000       
+> 1.0000
+          Comp73 |            0            0             0.0000       
+> 1.0000
+          Comp74 |            0            0             0.0000       
+> 1.0000
+          Comp75 |            0            0             0.0000       
+> 1.0000
+          Comp76 |            0            0             0.0000       
+> 1.0000
+          Comp77 |            0            0             0.0000       
+> 1.0000
+          Comp78 |            0            0             0.0000       
+> 1.0000
+          Comp79 |            0            0             0.0000       
+> 1.0000
+          Comp80 |            0            0             0.0000       
+> 1.0000
+          Comp81 |            0            0             0.0000       
+> 1.0000
+          Comp82 |            0            .             0.0000       
+> 1.0000
+    ------------------------------------------------------------------
+> --------
+
+Principal components (eigenvectors) 
+
+    ------------------------------------------------
+        Variable |    Comp1     Comp2 | Unexplained 
+    -------------+--------------------+-------------
+              V4 |   0.0833    0.1597 |       .5618 
+              V5 |  -0.0515    0.0976 |       .8352 
+              V6 |  -0.1285    0.0459 |       .6723 
+              V7 |   0.0420    0.0563 |       .9289 
+              V8 |   0.1560    0.0437 |       .5317 
+              V9 |   0.2018    0.0374 |       .2383 
+             V10 |  -0.0074    0.1022 |       .8715 
+             V11 |   0.0584    0.0922 |       .8339 
+             V49 |   0.2078    0.0658 |       .1571 
+             V51 |   0.1765    0.0916 |        .328 
+             V52 |   0.1738   -0.0117 |        .446 
+             V53 |   0.1824    0.0496 |       .3616 
+             V54 |   0.0272    0.0958 |       .8745 
+             V55 |   0.0276   -0.1281 |       .7859 
+             V59 |   0.0600   -0.0839 |       .8481 
+             V70 |   0.0901    0.0666 |       .7974 
+             V71 |   0.1696    0.0047 |       .4734 
+             V72 |   0.1487    0.0326 |       .5825 
+             V73 |   0.0630    0.0154 |       .9244 
+             V75 |   0.1789    0.0353 |       .3994 
+             V76 |   0.1340    0.0371 |       .6548 
+             V77 |   0.1619    0.0689 |       .4628 
+             V78 |   0.0701    0.1474 |       .6451 
+             V79 |   0.1545    0.0982 |       .4458 
+             V96 |  -0.0965   -0.0665 |       .7755 
+             V97 |  -0.0772   -0.0278 |       .8817 
+             V98 |   0.0647   -0.0565 |       .8844 
+             V99 |   0.0517    0.1276 |       .7524 
+            V100 |   0.0475    0.1169 |        .792 
+            V101 |  -0.0129   -0.1453 |       .7394 
+            V108 |   0.1557    0.1039 |       .4244 
+            V110 |   0.0321    0.1465 |       .7194 
+            V111 |   0.0555    0.1432 |       .6935 
+            V113 |  -0.0432    0.1975 |       .4898 
+            V114 |  -0.0046    0.2052 |       .4858 
+            V115 |   0.0243    0.2031 |       .4856 
+            V117 |   0.0019    0.1779 |       .6136 
+            V119 |  -0.0506    0.1894 |       .5153 
+            V120 |   0.0414    0.1927 |       .5155 
+            V121 |   0.0720    0.1525 |       .6214 
+            V122 |  -0.0389    0.1572 |       .6707 
+            V123 |  -0.0392    0.1555 |       .6767 
+            V124 |   0.0075    0.2015 |       .5035 
+            V126 |  -0.0838    0.1364 |       .6447 
+            V131 |  -0.0037   -0.0143 |       .9973 
+            V132 |  -0.1998   -0.0211 |        .264 
+            V133 |   0.1179   -0.0269 |       .7367 
+            V134 |   0.0486   -0.0670 |        .902 
+            V136 |   0.1069   -0.0415 |       .7701 
+            V137 |  -0.0584   -0.0507 |       .9062 
+            V138 |  -0.1603   -0.1039 |       .3983 
+            V139 |   0.1806   -0.0364 |       .3873 
+            V153 |   0.2017    0.0314 |        .244 
+            V155 |   0.0243   -0.0560 |       .9509 
+            V156 |  -0.0831    0.0105 |       .8722 
+            V170 |  -0.0143    0.1656 |       .6615 
+            V171 |   0.0880   -0.1522 |       .5759 
+            V173 |   0.0961   -0.1549 |       .5382 
+            V174 |   0.0817   -0.1234 |       .6921 
+            V181 |   0.1502   -0.0504 |       .5565 
+            V182 |   0.1774   -0.0285 |       .4143 
+            V183 |   0.1689   -0.0242 |       .4708 
+            V184 |   0.1668   -0.0295 |       .4806 
+            V188 |   0.1331   -0.1315 |       .4648 
+            V189 |   0.1052   -0.1394 |       .5603 
+            V190 |   0.1418   -0.1054 |       .4967 
+            V191 |   0.1066   -0.0818 |       .7104 
+            V192 |  -0.0679   -0.1678 |       .5719 
+            V193 |  -0.0297   -0.1585 |       .6772 
+            V194 |  -0.0647    0.0450 |       .8988 
+            V195 |  -0.1182    0.0425 |       .7224 
+            V196 |  -0.0391    0.0716 |       .9095 
+            V197 |   0.0139   -0.1390 |       .7608 
+            V198 |  -0.0576    0.0964 |       .8261 
+            V199 |  -0.0469    0.1595 |       .6491 
+            V200 |  -0.0927    0.1473 |        .578 
+            V202 |  -0.0900    0.1506 |       .5751 
+            V205 |   0.1875    0.0796 |       .2796 
+            V207 |   0.1290    0.0856 |        .606 
+            V208 |  -0.1458    0.0902 |       .5116 
+            V209 |  -0.1327    0.0260 |       .6695 
+            V210 |  -0.0873    0.1250 |       .6699 
+    ------------------------------------------------
+command svmat2 is unrecognized
+r(199);
+
+end of do-file
+
+r(199);
+
+. do "/var/folders/4l/dlqg8bq90yl5n12s2lltnc480000gn/T//SD59642.000000
+> "
+
+.         findit svmat2
+
+. 
+end of do-file
+
+. do "/var/folders/4l/dlqg8bq90yl5n12s2lltnc480000gn/T//SD59642.000000
+> "
+
+. foreach J in ORI NOR { // Doing both original and normalized dataset
+  2. 
+.         use "$inputpath/WV6_Data_`J'.dta", clear
+  3.         
+.         ** Principal component analysis with two components
+.         pca V*, com(2)
+  4.         
+.         ** Obtain factor loading 
+.         preserve 
+  5.         
+.         matrix define A=e(L)
+  6.         svmat2 A, rnames(Q)
+  7.         findit svmat2
+  8.         gen aA1=abs(A1)
+  9.         gen aA2=abs(A2)
+ 10.         gsort -aA1
+ 11.         keep Q aA1 aA2
+ 12.         
+.         tempfile factorloading
+ 13.         save `factorloading', replace
+ 14.         
+.         restore 
+ 15.         
+.         ** Merging the data with the factor loading
+.         reshape long V, i(countryID) j(Questions)
+ 16.         tostring Questions, gen(Q)
+ 17.         replace Q = "V"+Q
+ 18.         
+.         merge m:1 Q using `factorloading', nogen
+ 19.         
+.         ** Generate score for each component
+.         gen Z1 = V*aA1
+ 20.         gen Z2 = V*aA2
+ 21.         
+.         la var Z1 "First principal component"
+ 22.         la var Z2 "Second principal component"
+ 23.         
+.         /* An alternative way to obtain the score that is much simpl
+> er is
+>            by: predict Z1 Z2, score after pca command */
+.         
+.         ** Obtaining country average 
+.         sort countryID Questions
+ 24.         collapse (mean) Z1 Z2, by(country COW)
+ 25.         
+.         ** Clustering country 
+.         set seed 20230920
+ 26.         cluster kmeans Z1 Z2, k(5) gen(group) name(PCA)
+ 27.         
+.         la var Z1 "First principal component"
+ 28.         la var Z2 "Second principal component"
+ 29.         
+.         ** Culture map
+.         sepscatter Z1 Z2, separate(group) mylabel(COW) ///
+>         graphregion(color(white)) ytitle("First principal component 
+> score") ///
+>         xtitle("Second principal component score") ///
+>         title("PCA Culture Map ($`J')") 
+ 30.         
+.         graph export "$outputpath/Graphs/$`J'/PCA_CultureMap_`J'.png
+> ", replace
+ 31. 
+. }       
+file Analysis/Data/WV6_Data_ORI.dta not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. do "/var/folders/4l/dlqg8bq90yl5n12s2lltnc480000gn/T//SD59642.000000
+> "
+
+. //PRINCIPAL COMPONENET ANALYSIS
+. 
+. foreach J in NON_NOR NOR { // Doing both non-normalized and normaliz
+> ed dataset
+  2. 
+.         use "$inputpath/WV6_Data_`J'.dta", clear
+  3.         
+. //Principal component analysis with two components
+.         pca V*, com(2)
+  4.         
+. //Obtaining factor loading 
+.         preserve 
+  5.         
+.         matrix define A=e(L)
+  6.         svmat2 A, rnames(Q)
+  7.         findit svmat2
+  8.         gen aA1=abs(A1)
+  9.         gen aA2=abs(A2)
+ 10.         gsort -aA1
+ 11.         keep Q aA1 aA2
+ 12.         
+.         tempfile factorloading
+ 13.         save `factorloading', replace
+ 14.         
+.         restore 
+ 15.         
+. //Merging the data with the factor loading
+.         reshape long V, i(countryID) j(Questions)
+ 16.         tostring Questions, gen(Q)
+ 17.         replace Q = "V"+Q
+ 18.         
+.         merge m:1 Q using `factorloading', nogen
+ 19.         
+. //Generating score for each component
+.         gen Z1 = V*aA1
+ 20.         gen Z2 = V*aA2
+ 21.         
+.         la var Z1 "First principal component"
+ 22.         la var Z2 "Second principal component"
+ 23.         
+. //Obtaining country average 
+.         sort countryID Questions
+ 24.         collapse (mean) Z1 Z2, by(country COW)
+ 25.         
+. //Clustering country 
+.         set seed 19940103
+ 26.         cluster kmeans Z1 Z2, k(5) gen(group) name(PCA)
+ 27.         
+.         la var Z1 "First principal component"
+ 28.         la var Z2 "Second principal component"
+ 29.         
+. //Culture map
+.         sepscatter Z1 Z2, separate(group) mylabel(COW) ///
+>         graphregion(color(white)) ytitle("First principal component 
+> score") ///
+>         xtitle("Second principal component score") ///
+>         title("PCA Culture Map ($`J')") 
+ 30.         
+.         graph export "$outputpath/Graphs/$`J'/PCA_CultureMap_`J'.png
+> ", replace
+ 31. 
+. }       
+
+Principal components/correlation                 Number of obs    =   
+>       60
+                                                 Number of comp.  =   
+>        2
+                                                 Trace            =   
+>       82
+    Rotation: (unrotated = principal)            Rho              =   
+>   0.3719
+
+    ------------------------------------------------------------------
+> --------
+       Component |   Eigenvalue   Difference         Proportion   Cumu
+> lative
+    -------------+----------------------------------------------------
+> --------
+           Comp1 |      18.2932      6.08864             0.2231       
+> 0.2231
+           Comp2 |      12.2046       2.8603             0.1488       
+> 0.3719
+           Comp3 |      9.34428      2.34599             0.1140       
+> 0.4859
+           Comp4 |       6.9983      2.06586             0.0853       
+> 0.5712
+           Comp5 |      4.93244      1.04765             0.0602       
+> 0.6314
+           Comp6 |      3.88478      1.07541             0.0474       
+> 0.6788
+           Comp7 |      2.80937      .181993             0.0343       
+> 0.7130
+           Comp8 |      2.62738      .670601             0.0320       
+> 0.7451
+           Comp9 |      1.95678      .248185             0.0239       
+> 0.7689
+          Comp10 |      1.70859     .0698504             0.0208       
+> 0.7898
+          Comp11 |      1.63874      .158893             0.0200       
+> 0.8097
+          Comp12 |      1.47985     .0616149             0.0180       
+> 0.8278
+          Comp13 |      1.41823      .402635             0.0173       
+> 0.8451
+          Comp14 |       1.0156     .0708412             0.0124       
+> 0.8575
+          Comp15 |      .944756     .0249611             0.0115       
+> 0.8690
+          Comp16 |      .919794      .110346             0.0112       
+> 0.8802
+          Comp17 |      .809448     .0197347             0.0099       
+> 0.8901
+          Comp18 |      .789713     .0901177             0.0096       
+> 0.8997
+          Comp19 |      .699596     .0481897             0.0085       
+> 0.9082
+          Comp20 |      .651406      .100609             0.0079       
+> 0.9162
+          Comp21 |      .550797    .00454482             0.0067       
+> 0.9229
+          Comp22 |      .546252     .0484087             0.0067       
+> 0.9296
+          Comp23 |      .497843     .0421247             0.0061       
+> 0.9356
+          Comp24 |      .455718     .0273058             0.0056       
+> 0.9412
+          Comp25 |      .428413     .0559606             0.0052       
+> 0.9464
+          Comp26 |      .372452     .0512048             0.0045       
+> 0.9510
+          Comp27 |      .321247    .00254096             0.0039       
+> 0.9549
+          Comp28 |      .318706     .0231903             0.0039       
+> 0.9588
+          Comp29 |      .295516     .0204986             0.0036       
+> 0.9624
+          Comp30 |      .275017     .0151083             0.0034       
+> 0.9657
+          Comp31 |      .259909     .0182243             0.0032       
+> 0.9689
+          Comp32 |      .241685     .0140369             0.0029       
+> 0.9718
+          Comp33 |      .227648     .0113823             0.0028       
+> 0.9746
+          Comp34 |      .216266     .0183702             0.0026       
+> 0.9772
+          Comp35 |      .197895     .0177499             0.0024       
+> 0.9797
+          Comp36 |      .180145     .0290083             0.0022       
+> 0.9819
+          Comp37 |      .151137    .00662096             0.0018       
+> 0.9837
+          Comp38 |      .144516    .00995383             0.0018       
+> 0.9855
+          Comp39 |      .134562    .00603482             0.0016       
+> 0.9871
+          Comp40 |      .128528     .0127419             0.0016       
+> 0.9887
+          Comp41 |      .115786     .0123578             0.0014       
+> 0.9901
+          Comp42 |      .103428     .0144102             0.0013       
+> 0.9913
+          Comp43 |     .0890176     .0014417             0.0011       
+> 0.9924
+          Comp44 |     .0875759    .00828718             0.0011       
+> 0.9935
+          Comp45 |     .0792887     .0101849             0.0010       
+> 0.9945
+          Comp46 |     .0691038     .0113376             0.0008       
+> 0.9953
+          Comp47 |     .0577662    .00259821             0.0007       
+> 0.9960
+          Comp48 |      .055168    .00618937             0.0007       
+> 0.9967
+          Comp49 |     .0489786    .00390578             0.0006       
+> 0.9973
+          Comp50 |     .0450728    .00666554             0.0005       
+> 0.9978
+          Comp51 |     .0384073    .00599507             0.0005       
+> 0.9983
+          Comp52 |     .0324122    .00559706             0.0004       
+> 0.9987
+          Comp53 |     .0268151    .00614166             0.0003       
+> 0.9990
+          Comp54 |     .0206735    .00191805             0.0003       
+> 0.9993
+          Comp55 |     .0187554    .00511876             0.0002       
+> 0.9995
+          Comp56 |     .0136367    .00123367             0.0002       
+> 0.9997
+          Comp57 |      .012403    .00426585             0.0002       
+> 0.9998
+          Comp58 |    .00813715    .00165936             0.0001       
+> 0.9999
+          Comp59 |    .00647779    .00647779             0.0001       
+> 1.0000
+          Comp60 |            0            0             0.0000       
+> 1.0000
+          Comp61 |            0            0             0.0000       
+> 1.0000
+          Comp62 |            0            0             0.0000       
+> 1.0000
+          Comp63 |            0            0             0.0000       
+> 1.0000
+          Comp64 |            0            0             0.0000       
+> 1.0000
+          Comp65 |            0            0             0.0000       
+> 1.0000
+          Comp66 |            0            0             0.0000       
+> 1.0000
+          Comp67 |            0            0             0.0000       
+> 1.0000
+          Comp68 |            0            0             0.0000       
+> 1.0000
+          Comp69 |            0            0             0.0000       
+> 1.0000
+          Comp70 |            0            0             0.0000       
+> 1.0000
+          Comp71 |            0            0             0.0000       
+> 1.0000
+          Comp72 |            0            0             0.0000       
+> 1.0000
+          Comp73 |            0            0             0.0000       
+> 1.0000
+          Comp74 |            0            0             0.0000       
+> 1.0000
+          Comp75 |            0            0             0.0000       
+> 1.0000
+          Comp76 |            0            0             0.0000       
+> 1.0000
+          Comp77 |            0            0             0.0000       
+> 1.0000
+          Comp78 |            0            0             0.0000       
+> 1.0000
+          Comp79 |            0            0             0.0000       
+> 1.0000
+          Comp80 |            0            0             0.0000       
+> 1.0000
+          Comp81 |            0            0             0.0000       
+> 1.0000
+          Comp82 |            0            .             0.0000       
+> 1.0000
+    ------------------------------------------------------------------
+> --------
+
+Principal components (eigenvectors) 
+
+    ------------------------------------------------
+        Variable |    Comp1     Comp2 | Unexplained 
+    -------------+--------------------+-------------
+              V4 |   0.0833    0.1597 |       .5618 
+              V5 |  -0.0515    0.0976 |       .8352 
+              V6 |  -0.1285    0.0459 |       .6723 
+              V7 |   0.0420    0.0563 |       .9289 
+              V8 |   0.1560    0.0437 |       .5317 
+              V9 |   0.2018    0.0374 |       .2383 
+             V10 |  -0.0074    0.1022 |       .8715 
+             V11 |   0.0584    0.0922 |       .8339 
+             V49 |   0.2078    0.0658 |       .1571 
+             V51 |   0.1765    0.0916 |        .328 
+             V52 |   0.1738   -0.0117 |        .446 
+             V53 |   0.1824    0.0496 |       .3616 
+             V54 |   0.0272    0.0958 |       .8745 
+             V55 |   0.0276   -0.1281 |       .7859 
+             V59 |   0.0600   -0.0839 |       .8481 
+             V70 |   0.0901    0.0666 |       .7974 
+             V71 |   0.1696    0.0047 |       .4734 
+             V72 |   0.1487    0.0326 |       .5825 
+             V73 |   0.0630    0.0154 |       .9244 
+             V75 |   0.1789    0.0353 |       .3994 
+             V76 |   0.1340    0.0371 |       .6548 
+             V77 |   0.1619    0.0689 |       .4628 
+             V78 |   0.0701    0.1474 |       .6451 
+             V79 |   0.1545    0.0982 |       .4458 
+             V96 |  -0.0965   -0.0665 |       .7755 
+             V97 |  -0.0772   -0.0278 |       .8817 
+             V98 |   0.0647   -0.0565 |       .8844 
+             V99 |   0.0517    0.1276 |       .7524 
+            V100 |   0.0475    0.1169 |        .792 
+            V101 |  -0.0129   -0.1453 |       .7394 
+            V108 |   0.1557    0.1039 |       .4244 
+            V110 |   0.0321    0.1465 |       .7194 
+            V111 |   0.0555    0.1432 |       .6935 
+            V113 |  -0.0432    0.1975 |       .4898 
+            V114 |  -0.0046    0.2052 |       .4858 
+            V115 |   0.0243    0.2031 |       .4856 
+            V117 |   0.0019    0.1779 |       .6136 
+            V119 |  -0.0506    0.1894 |       .5153 
+            V120 |   0.0414    0.1927 |       .5155 
+            V121 |   0.0720    0.1525 |       .6214 
+            V122 |  -0.0389    0.1572 |       .6707 
+            V123 |  -0.0392    0.1555 |       .6767 
+            V124 |   0.0075    0.2015 |       .5035 
+            V126 |  -0.0838    0.1364 |       .6447 
+            V131 |  -0.0037   -0.0143 |       .9973 
+            V132 |  -0.1998   -0.0211 |        .264 
+            V133 |   0.1179   -0.0269 |       .7367 
+            V134 |   0.0486   -0.0670 |        .902 
+            V136 |   0.1069   -0.0415 |       .7701 
+            V137 |  -0.0584   -0.0507 |       .9062 
+            V138 |  -0.1603   -0.1039 |       .3983 
+            V139 |   0.1806   -0.0364 |       .3873 
+            V153 |   0.2017    0.0314 |        .244 
+            V155 |   0.0243   -0.0560 |       .9509 
+            V156 |  -0.0831    0.0105 |       .8722 
+            V170 |  -0.0143    0.1656 |       .6615 
+            V171 |   0.0880   -0.1522 |       .5759 
+            V173 |   0.0961   -0.1549 |       .5382 
+            V174 |   0.0817   -0.1234 |       .6921 
+            V181 |   0.1502   -0.0504 |       .5565 
+            V182 |   0.1774   -0.0285 |       .4143 
+            V183 |   0.1689   -0.0242 |       .4708 
+            V184 |   0.1668   -0.0295 |       .4806 
+            V188 |   0.1331   -0.1315 |       .4648 
+            V189 |   0.1052   -0.1394 |       .5603 
+            V190 |   0.1418   -0.1054 |       .4967 
+            V191 |   0.1066   -0.0818 |       .7104 
+            V192 |  -0.0679   -0.1678 |       .5719 
+            V193 |  -0.0297   -0.1585 |       .6772 
+            V194 |  -0.0647    0.0450 |       .8988 
+            V195 |  -0.1182    0.0425 |       .7224 
+            V196 |  -0.0391    0.0716 |       .9095 
+            V197 |   0.0139   -0.1390 |       .7608 
+            V198 |  -0.0576    0.0964 |       .8261 
+            V199 |  -0.0469    0.1595 |       .6491 
+            V200 |  -0.0927    0.1473 |        .578 
+            V202 |  -0.0900    0.1506 |       .5751 
+            V205 |   0.1875    0.0796 |       .2796 
+            V207 |   0.1290    0.0856 |        .606 
+            V208 |  -0.1458    0.0902 |       .5116 
+            V209 |  -0.1327    0.0260 |       .6695 
+            V210 |  -0.0873    0.1250 |       .6699 
+    ------------------------------------------------
+number of observations will be reset to 82
+Press any key to continue, or Break to abort
+Number of observations (_N) was 60, now 82.
+(file
+    /var/folders/4l/dlqg8bq90yl5n12s2lltnc480000gn/T//S_59642.000002
+    not found)
+file
+    /var/folders/4l/dlqg8bq90yl5n12s2lltnc480000gn/T//S_59642.000002
+    saved as .dta format
+(j = 4 5 6 7 8 9 10 11 49 51 52 53 54 55 59 70 71 72 73 75 76 77 78 79
+>  96 97 98 99 100 101 108 110 111 113 114 115 117 119 120 121 122 123
+>  124 126 131 132 133 134 136 137 138 139 153 155 156 170 171 173 174
+>  181 182 183 184 188 189 190 191 192 193 194 195 196 197 198 199 200
+>  202 205 207 208 209 210)
+
+Data                               Wide   ->   Long
+----------------------------------------------------------------------
+> -------
+Number of observations               60   ->   4,920       
+Number of variables                  85   ->   5           
+j variable (82 values)                    ->   Questions
+xij variables:
+                         V4 V5 ... V210   ->   V
+----------------------------------------------------------------------
+> -------
+Q generated as str3
+variable Q was str3 now str4
+(4,920 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                             4,920  
+    -----------------------------------------
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Non-normalized/PCA_CultureMap_NON_NOR.png saved
+    as PNG format
+
+Principal components/correlation                 Number of obs    =   
+>       60
+                                                 Number of comp.  =   
+>        2
+                                                 Trace            =   
+>       82
+    Rotation: (unrotated = principal)            Rho              =   
+>   0.3719
+
+    ------------------------------------------------------------------
+> --------
+       Component |   Eigenvalue   Difference         Proportion   Cumu
+> lative
+    -------------+----------------------------------------------------
+> --------
+           Comp1 |      18.2932      6.08864             0.2231       
+> 0.2231
+           Comp2 |      12.2046       2.8603             0.1488       
+> 0.3719
+           Comp3 |      9.34428      2.34599             0.1140       
+> 0.4859
+           Comp4 |       6.9983      2.06586             0.0853       
+> 0.5712
+           Comp5 |      4.93244      1.04765             0.0602       
+> 0.6314
+           Comp6 |      3.88478      1.07541             0.0474       
+> 0.6788
+           Comp7 |      2.80937      .181993             0.0343       
+> 0.7130
+           Comp8 |      2.62738      .670601             0.0320       
+> 0.7451
+           Comp9 |      1.95678      .248185             0.0239       
+> 0.7689
+          Comp10 |      1.70859     .0698504             0.0208       
+> 0.7898
+          Comp11 |      1.63874      .158893             0.0200       
+> 0.8097
+          Comp12 |      1.47985     .0616149             0.0180       
+> 0.8278
+          Comp13 |      1.41823      .402635             0.0173       
+> 0.8451
+          Comp14 |       1.0156     .0708412             0.0124       
+> 0.8575
+          Comp15 |      .944756     .0249611             0.0115       
+> 0.8690
+          Comp16 |      .919794      .110346             0.0112       
+> 0.8802
+          Comp17 |      .809448     .0197347             0.0099       
+> 0.8901
+          Comp18 |      .789713     .0901177             0.0096       
+> 0.8997
+          Comp19 |      .699596     .0481897             0.0085       
+> 0.9082
+          Comp20 |      .651406      .100609             0.0079       
+> 0.9162
+          Comp21 |      .550797    .00454481             0.0067       
+> 0.9229
+          Comp22 |      .546252     .0484087             0.0067       
+> 0.9296
+          Comp23 |      .497843     .0421247             0.0061       
+> 0.9356
+          Comp24 |      .455718     .0273058             0.0056       
+> 0.9412
+          Comp25 |      .428413     .0559606             0.0052       
+> 0.9464
+          Comp26 |      .372452     .0512048             0.0045       
+> 0.9510
+          Comp27 |      .321247    .00254096             0.0039       
+> 0.9549
+          Comp28 |      .318706     .0231903             0.0039       
+> 0.9588
+          Comp29 |      .295516     .0204986             0.0036       
+> 0.9624
+          Comp30 |      .275017     .0151083             0.0034       
+> 0.9657
+          Comp31 |      .259909     .0182243             0.0032       
+> 0.9689
+          Comp32 |      .241685     .0140369             0.0029       
+> 0.9718
+          Comp33 |      .227648     .0113823             0.0028       
+> 0.9746
+          Comp34 |      .216266     .0183702             0.0026       
+> 0.9772
+          Comp35 |      .197895     .0177499             0.0024       
+> 0.9797
+          Comp36 |      .180145     .0290083             0.0022       
+> 0.9819
+          Comp37 |      .151137    .00662096             0.0018       
+> 0.9837
+          Comp38 |      .144516    .00995383             0.0018       
+> 0.9855
+          Comp39 |      .134562    .00603482             0.0016       
+> 0.9871
+          Comp40 |      .128528     .0127419             0.0016       
+> 0.9887
+          Comp41 |      .115786     .0123578             0.0014       
+> 0.9901
+          Comp42 |      .103428     .0144102             0.0013       
+> 0.9913
+          Comp43 |     .0890176     .0014417             0.0011       
+> 0.9924
+          Comp44 |     .0875759    .00828718             0.0011       
+> 0.9935
+          Comp45 |     .0792887     .0101849             0.0010       
+> 0.9945
+          Comp46 |     .0691038     .0113376             0.0008       
+> 0.9953
+          Comp47 |     .0577662    .00259821             0.0007       
+> 0.9960
+          Comp48 |      .055168    .00618937             0.0007       
+> 0.9967
+          Comp49 |     .0489786    .00390577             0.0006       
+> 0.9973
+          Comp50 |     .0450728    .00666555             0.0005       
+> 0.9978
+          Comp51 |     .0384073    .00599507             0.0005       
+> 0.9983
+          Comp52 |     .0324122    .00559707             0.0004       
+> 0.9987
+          Comp53 |     .0268151    .00614166             0.0003       
+> 0.9990
+          Comp54 |     .0206735    .00191805             0.0003       
+> 0.9993
+          Comp55 |     .0187554    .00511876             0.0002       
+> 0.9995
+          Comp56 |     .0136367    .00123367             0.0002       
+> 0.9997
+          Comp57 |      .012403    .00426585             0.0002       
+> 0.9998
+          Comp58 |    .00813715    .00165936             0.0001       
+> 0.9999
+          Comp59 |    .00647779    .00647779             0.0001       
+> 1.0000
+          Comp60 |            0            0             0.0000       
+> 1.0000
+          Comp61 |            0            0             0.0000       
+> 1.0000
+          Comp62 |            0            0             0.0000       
+> 1.0000
+          Comp63 |            0            0             0.0000       
+> 1.0000
+          Comp64 |            0            0             0.0000       
+> 1.0000
+          Comp65 |            0            0             0.0000       
+> 1.0000
+          Comp66 |            0            0             0.0000       
+> 1.0000
+          Comp67 |            0            0             0.0000       
+> 1.0000
+          Comp68 |            0            0             0.0000       
+> 1.0000
+          Comp69 |            0            0             0.0000       
+> 1.0000
+          Comp70 |            0            0             0.0000       
+> 1.0000
+          Comp71 |            0            0             0.0000       
+> 1.0000
+          Comp72 |            0            0             0.0000       
+> 1.0000
+          Comp73 |            0            0             0.0000       
+> 1.0000
+          Comp74 |            0            0             0.0000       
+> 1.0000
+          Comp75 |            0            0             0.0000       
+> 1.0000
+          Comp76 |            0            0             0.0000       
+> 1.0000
+          Comp77 |            0            0             0.0000       
+> 1.0000
+          Comp78 |            0            0             0.0000       
+> 1.0000
+          Comp79 |            0            0             0.0000       
+> 1.0000
+          Comp80 |            0            0             0.0000       
+> 1.0000
+          Comp81 |            0            0             0.0000       
+> 1.0000
+          Comp82 |            0            .             0.0000       
+> 1.0000
+    ------------------------------------------------------------------
+> --------
+
+Principal components (eigenvectors) 
+
+    ------------------------------------------------
+        Variable |    Comp1     Comp2 | Unexplained 
+    -------------+--------------------+-------------
+              V4 |   0.0833    0.1597 |       .5618 
+              V5 |  -0.0515    0.0976 |       .8352 
+              V6 |  -0.1285    0.0459 |       .6723 
+              V7 |   0.0420    0.0563 |       .9289 
+              V8 |   0.1560    0.0437 |       .5317 
+              V9 |   0.2018    0.0374 |       .2383 
+             V10 |  -0.0074    0.1022 |       .8715 
+             V11 |   0.0584    0.0922 |       .8339 
+             V49 |   0.2078    0.0658 |       .1571 
+             V51 |   0.1765    0.0916 |        .328 
+             V52 |   0.1738   -0.0117 |        .446 
+             V53 |   0.1824    0.0496 |       .3616 
+             V54 |   0.0272    0.0958 |       .8745 
+             V55 |   0.0276   -0.1281 |       .7859 
+             V59 |   0.0600   -0.0839 |       .8481 
+             V70 |   0.0901    0.0666 |       .7974 
+             V71 |   0.1696    0.0047 |       .4734 
+             V72 |   0.1487    0.0326 |       .5825 
+             V73 |   0.0630    0.0154 |       .9244 
+             V75 |   0.1789    0.0353 |       .3994 
+             V76 |   0.1340    0.0371 |       .6548 
+             V77 |   0.1619    0.0689 |       .4628 
+             V78 |   0.0701    0.1474 |       .6451 
+             V79 |   0.1545    0.0982 |       .4458 
+             V96 |  -0.0965   -0.0665 |       .7755 
+             V97 |  -0.0772   -0.0278 |       .8817 
+             V98 |   0.0647   -0.0565 |       .8844 
+             V99 |   0.0517    0.1276 |       .7524 
+            V100 |   0.0475    0.1169 |        .792 
+            V101 |  -0.0129   -0.1453 |       .7394 
+            V108 |   0.1557    0.1039 |       .4244 
+            V110 |   0.0321    0.1465 |       .7194 
+            V111 |   0.0555    0.1432 |       .6935 
+            V113 |  -0.0432    0.1975 |       .4898 
+            V114 |  -0.0046    0.2052 |       .4858 
+            V115 |   0.0243    0.2031 |       .4856 
+            V117 |   0.0019    0.1779 |       .6136 
+            V119 |  -0.0506    0.1894 |       .5153 
+            V120 |   0.0414    0.1927 |       .5155 
+            V121 |   0.0720    0.1525 |       .6214 
+            V122 |  -0.0389    0.1572 |       .6707 
+            V123 |  -0.0392    0.1555 |       .6767 
+            V124 |   0.0075    0.2015 |       .5035 
+            V126 |  -0.0838    0.1364 |       .6447 
+            V131 |  -0.0037   -0.0143 |       .9973 
+            V132 |  -0.1998   -0.0211 |        .264 
+            V133 |   0.1179   -0.0269 |       .7367 
+            V134 |   0.0486   -0.0670 |        .902 
+            V136 |   0.1069   -0.0415 |       .7701 
+            V137 |  -0.0584   -0.0507 |       .9062 
+            V138 |  -0.1603   -0.1039 |       .3983 
+            V139 |   0.1806   -0.0364 |       .3873 
+            V153 |   0.2017    0.0314 |        .244 
+            V155 |   0.0243   -0.0560 |       .9509 
+            V156 |  -0.0831    0.0105 |       .8722 
+            V170 |  -0.0143    0.1656 |       .6615 
+            V171 |   0.0880   -0.1522 |       .5759 
+            V173 |   0.0961   -0.1549 |       .5382 
+            V174 |   0.0817   -0.1234 |       .6921 
+            V181 |   0.1502   -0.0504 |       .5565 
+            V182 |   0.1774   -0.0285 |       .4143 
+            V183 |   0.1689   -0.0242 |       .4708 
+            V184 |   0.1668   -0.0295 |       .4806 
+            V188 |   0.1331   -0.1315 |       .4648 
+            V189 |   0.1052   -0.1394 |       .5603 
+            V190 |   0.1418   -0.1054 |       .4967 
+            V191 |   0.1066   -0.0818 |       .7104 
+            V192 |  -0.0679   -0.1678 |       .5719 
+            V193 |  -0.0297   -0.1585 |       .6772 
+            V194 |  -0.0647    0.0450 |       .8988 
+            V195 |  -0.1182    0.0425 |       .7224 
+            V196 |  -0.0391    0.0716 |       .9095 
+            V197 |   0.0139   -0.1390 |       .7608 
+            V198 |  -0.0576    0.0964 |       .8261 
+            V199 |  -0.0469    0.1595 |       .6491 
+            V200 |  -0.0927    0.1473 |        .578 
+            V202 |  -0.0900    0.1506 |       .5751 
+            V205 |   0.1875    0.0796 |       .2796 
+            V207 |   0.1290    0.0856 |        .606 
+            V208 |  -0.1458    0.0902 |       .5116 
+            V209 |  -0.1327    0.0260 |       .6695 
+            V210 |  -0.0873    0.1250 |       .6699 
+    ------------------------------------------------
+number of observations will be reset to 82
+Press any key to continue, or Break to abort
+Number of observations (_N) was 60, now 82.
+(file
+    /var/folders/4l/dlqg8bq90yl5n12s2lltnc480000gn/T//S_59642.000004
+    not found)
+file
+    /var/folders/4l/dlqg8bq90yl5n12s2lltnc480000gn/T//S_59642.000004
+    saved as .dta format
+(j = 4 5 6 7 8 9 10 11 49 51 52 53 54 55 59 70 71 72 73 75 76 77 78 79
+>  96 97 98 99 100 101 108 110 111 113 114 115 117 119 120 121 122 123
+>  124 126 131 132 133 134 136 137 138 139 153 155 156 170 171 173 174
+>  181 182 183 184 188 189 190 191 192 193 194 195 196 197 198 199 200
+>  202 205 207 208 209 210)
+
+Data                               Wide   ->   Long
+----------------------------------------------------------------------
+> -------
+Number of observations               60   ->   4,920       
+Number of variables                  85   ->   5           
+j variable (82 values)                    ->   Questions
+xij variables:
+                         V4 V5 ... V210   ->   V
+----------------------------------------------------------------------
+> -------
+Q generated as str3
+variable Q was str3 now str4
+(4,920 real changes made)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                             4,920  
+    -----------------------------------------
+file
+    /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis/
+    > Results/Graphs/Normalized/PCA_CultureMap_NOR.png saved as PNG
+    format
+
+. 
+end of do-file
+
+. use "/Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis
+> /Data/WV6_Data_NOR.dta"
+no; dataset in memory has changed since last saved
+r(4);
+
+. save "/Users/gizemkilicgedik/Desktop/changeddata.dta"
+file /Users/gizemkilicgedik/Desktop/changeddata.dta saved
+
+. use "/Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis
+> /Data/WV6_Data_NOR.dta"
+
+. use "/Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/Analysis
+> /Data/WV6_Data_NOR.dta"
+
+. use "/Users/gizemkilicgedik/Desktop/AppliedEmpirical/task3/Analysis/
+> Data/WV6_Data_NOR.dta"
+
+. exit

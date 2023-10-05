@@ -1,0 +1,3128 @@
+----------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/da
+> tacleaning.log
+  log type:  text
+ opened on:  20 Sep 2023, 08:52:45
+
+. 
+. //datacleaning.do
+. //Gizem Kilicgedik Septermber 19, 2023
+. //This is the do file for cleaning the World Values Survey Data
+. 
+.         version 17
+
+.         clear all
+
+.         macro drop _all
+
+.         set linesize 70 
+
+.         global path "/Users/gizemkilicgedik/Desktop/AppliedEmpirical
+> /task_3"
+
+.         cd "$path" //setting global directory path here
+/Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3
+
+.         global inputpath "Raw/Data"
+
+.         global outputpath "Analysis/Data"
+
+.         ssc install missings, replace
+checking missings consistency and verifying not already installed...
+all files already exist and are up to date.
+
+.         
+. //I am starting with uploading the data
+.         use "$inputpath/WV6_Data_stata_v20201117.dta", clear
+
+.         
+. //Choosing the ordered variables
+.         keep C_COW_ALPHA V2 V4-V11 V49-V56 V59 V70-V79 V90-V139 V152
+> -V169 V170-V175 ///
+>                  V181-V186 V188-V191 V192-V197 V198-V210
+
+.         rename C_COW_ALPHA COW
+
+.         
+. //Checking the variable values
+.         codebook
+
+----------------------------------------------------------------------
+V2                                                      Country/region
+----------------------------------------------------------------------
+
+                  Type: Numeric (int)
+                 Label: V2
+
+                 Range: [12,887]                      Units: 1
+         Unique values: 60                        Missing .: 0/89,565
+
+              Examples: 233   Estonia
+                        398   Kazakhstan
+                        566   Nigeria
+                        710   South Africa
+
+----------------------------------------------------------------------
+COW                                             Country code CoW alpha
+----------------------------------------------------------------------
+
+                  Type: String (str3)
+
+         Unique values: 60                        Missing "": 0/89,565
+
+              Examples: "EST"
+                        "KUW"
+                        "PER"
+                        "SLV"
+
+----------------------------------------------------------------------
+V4                                           Important in life: Family
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V4
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 341/89,56
+> 5
+
+            Tabulation: Freq.   Numeric  Label
+                       82,057         1  Very important
+                        6,180         2  Rather important
+                          706         3  Not very important
+                          281         4  Not at all important
+                          341         .  
+
+----------------------------------------------------------------------
+V5                                          Important in life: Friends
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V5
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 545/89,56
+> 5
+
+            Tabulation: Freq.   Numeric  Label
+                       41,577         1  Very important
+                       36,588         2  Rather important
+                        9,157         3  Not very important
+                        1,698         4  Not at all important
+                          545         .  
+
+----------------------------------------------------------------------
+V6                                     Important in life: Leisure time
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V6
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,035/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       32,560         1  Very important
+                       37,210         2  Rather important
+                       14,814         3  Not very important
+                        3,946         4  Not at all important
+                        1,035         .  
+
+----------------------------------------------------------------------
+V7                                         Important in life: Politics
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V7
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,620/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       13,172         1  Very important
+                       25,966         2  Rather important
+                       29,553         3  Not very important
+                       19,254         4  Not at all important
+                        1,620         .  
+
+----------------------------------------------------------------------
+V8                                             Important in life: Work
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V8
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,519/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       55,962         1  Very important
+                       22,237         2  Rather important
+                        6,293         3  Not very important
+                        3,554         4  Not at all important
+                        1,519         .  
+
+----------------------------------------------------------------------
+V9                                         Important in life: Religion
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V9
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,348/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       44,390         1  Very important
+                       19,490         2  Rather important
+                       14,177         3  Not very important
+                       10,160         4  Not at all important
+                        1,348         .  
+
+----------------------------------------------------------------------
+V10                                               Feeling of happiness
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V10
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 758/89,56
+> 5
+
+            Tabulation: Freq.   Numeric  Label
+                       29,256         1  Very happy
+                       45,786         2  Quite happy
+                       11,214         3  Not very happy
+                        2,551         4  Not at all happy
+                          758         .  
+
+----------------------------------------------------------------------
+V11                                       State of health (subjective)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V11
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 326/89,56
+> 5
+
+            Tabulation: Freq.   Numeric  Label
+                       23,241         1  Very good
+                       39,632         2  Good
+                       21,058         3  Fair
+                        5,308         4  Poor
+                          326         .  
+
+----------------------------------------------------------------------
+V49        One of main goals in life has been to make my parents proud
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V49
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 3,193/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       42,636         1  Agree strongly
+                       32,943         2  Agree
+                        8,827         3  Disagree
+                        1,966         4  Strongly disagree
+                        3,193         .  
+
+----------------------------------------------------------------------
+V50                       Pre-school child suffers with working mother
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V50
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 4,048/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       14,418         1  Agree strongly
+                       26,475         2  Agree
+                       33,731         3  Disagree
+                       10,893         4  Strongly disagree
+                        4,048         .  
+
+----------------------------------------------------------------------
+V51                    Men make better political leaders than women do
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V51
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 4,098/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       19,312         1  Agree strongly
+                       23,795         2  Agree
+                       29,528         3  Disagree
+                       12,832         4  Strongly disagree
+                        4,098         .  
+
+----------------------------------------------------------------------
+V52             University is more important for a boy than for a girl
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V52
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 2,605/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        9,308         1  Agree strongly
+                       12,921         2  Agree
+                       38,302         3  Disagree
+                       26,429         4  Strongly disagree
+                        2,605         .  
+
+----------------------------------------------------------------------
+V53                  Men make better business executives than women do
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V53
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 3,912/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       15,670         1  Agree strongly
+                       22,427         2  Agree
+                       32,078         3  Disagree
+                       15,478         4  Strongly disagree
+                        3,912         .  
+
+----------------------------------------------------------------------
+V54                               Being a housewife just as fulfilling
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V54
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 4,656/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       21,515         1  Agree strongly
+                       32,510         2  Agree
+                       22,516         3  Disagree
+                        8,368         4  Strongly disagree
+                        4,656         .  
+
+----------------------------------------------------------------------
+V55                             How much freedom of choice and control
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V55, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 1,448/89,
+> 565
+
+              Examples: 5     
+                        7     
+                        8     
+                        9     
+
+----------------------------------------------------------------------
+V56                                    Do you think most people try to
+                                       take advantage of you (10 point
+                                       scale)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V56, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,726/89,
+> 565
+
+              Examples: 3     
+                        5     
+                        7     
+                        8     
+
+----------------------------------------------------------------------
+V59                 Satisfaction with financial situation of household
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V59, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 648/89,56
+> 5
+
+              Examples: 4     
+                        5     
+                        7     
+                        8     
+
+----------------------------------------------------------------------
+V70                                    Schwartz: It is important to
+                                       this person to think up new
+                                       ideas and be creative
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V70
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 2,977/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       18,711         1  Very much like me
+                       22,288         2  Like me
+                       20,980         3  Somewhat like me
+                       12,045         4  A little like me
+                        9,074         5  Not like me
+                        3,490         6  Not at all like me
+                        2,977         .  
+
+----------------------------------------------------------------------
+V71                Schwartz: It is important to this person to be rich
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V71
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 2,595/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        8,228         1  Very much like me
+                       12,723         2  Like me
+                       16,552         3  Somewhat like me
+                       15,016         4  A little like me
+                       22,035         5  Not like me
+                       12,416         6  Not at all like me
+                        2,595         .  
+
+----------------------------------------------------------------------
+V72                                    Schwartz: It is important to
+                                       this person living in secure
+                                       surroundings
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V72
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 2,091/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       27,271         1  Very much like me
+                       25,561         2  Like me
+                       17,839         3  Somewhat like me
+                        9,640         4  A little like me
+                        5,143         5  Not like me
+                        2,020         6  Not at all like me
+                        2,091         .  
+
+----------------------------------------------------------------------
+V73       Schwartz: It is important to this person to have a good time
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V73
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 2,486/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       13,988         1  Very much like me
+                       18,002         2  Like me
+                       18,985         3  Somewhat like me
+                       14,887         4  A little like me
+                       14,226         5  Not like me
+                        6,991         6  Not at all like me
+                        2,486         .  
+
+----------------------------------------------------------------------
+V74                                    Schwartz: It is important to
+                                       this person to do something for
+                                       the good of society
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V74
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 5,602/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       21,759         1  Very much like me
+                       25,785         2  Like me
+                       19,796         3  Somewhat like me
+                       10,576         4  A little like me
+                        4,514         5  Not like me
+                        1,533         6  Not at all like me
+                        5,602         .  
+
+----------------------------------------------------------------------
+V74B                                   Schwartz: It is important to
+                                       this person to help the people
+                                       nearby
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V74B
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 49,678/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                       10,892         1  Very much like me
+                       13,170         2  Like me
+                        8,869         3  Somewhat like me
+                        4,828         4  A little like me
+                        1,649         5  Not like me
+                          479         6  Not at all like me
+                       49,678         .  
+
+----------------------------------------------------------------------
+V75     Schwartz: It is important to this person being very successful
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V75
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 2,844/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       17,161         1  Very much like me
+                       21,262         2  Like me
+                       20,078         3  Somewhat like me
+                       13,078         4  A little like me
+                       10,850         5  Not like me
+                        4,292         6  Not at all like me
+                        2,844         .  
+
+----------------------------------------------------------------------
+V76                                    Schwartz: It is important to
+                                       this person adventure and
+                                       taking risks
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V76
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 3,132/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        9,523         1  Very much like me
+                       13,191         2  Like me
+                       15,915         3  Somewhat like me
+                       14,279         4  A little like me
+                       20,080         5  Not like me
+                       13,445         6  Not at all like me
+                        3,132         .  
+
+----------------------------------------------------------------------
+V77                                    Schwartz: It is important to
+                                       this person to always behave
+                                       properly
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V77
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 2,336/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       23,208         1  Very much like me
+                       25,473         2  Like me
+                       18,549         3  Somewhat like me
+                       10,721         4  A little like me
+                        6,691         5  Not like me
+                        2,587         6  Not at all like me
+                        2,336         .  
+
+----------------------------------------------------------------------
+V78                                    Schwartz: It is important to
+                                       this person looking after the
+                                       environment
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V78
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 2,326/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       21,684         1  Very much like me
+                       26,060         2  Like me
+                       20,312         3  Somewhat like me
+                       11,695         4  A little like me
+                        5,097         5  Not like me
+                        2,391         6  Not at all like me
+                        2,326         .  
+
+----------------------------------------------------------------------
+V79                 Schwartz: It is important to this person tradition
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V79
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 2,121/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       26,234         1  Very much like me
+                       23,139         2  Like me
+                       17,440         3  Somewhat like me
+                       10,119         4  A little like me
+                        6,974         5  Not like me
+                        3,538         6  Not at all like me
+                        2,121         .  
+
+----------------------------------------------------------------------
+V90                 Political action recently done: signing a petition
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V90
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 74,866/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        4,281         1  Not at all
+                        5,671         2  Once
+                        2,551         3  Twice
+                          870         4  Three times
+                        1,326         5  More than three times
+                       74,866         .  
+
+----------------------------------------------------------------------
+V91                Political action recently done: joining in boycotts
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V91
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 84,618/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        1,543         1  Not at all
+                        2,139         2  Once
+                          625         3  Twice
+                          214         4  Three times
+                          426         5  More than three times
+                       84,618         .  
+
+----------------------------------------------------------------------
+V92                                    Political action recently done:
+                                       Attending peaceful
+                                       demonstrations
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V92
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 79,341/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        3,093         1  Not at all
+                        3,691         2  Once
+                        1,539         3  Twice
+                          672         4  Three times
+                        1,229         5  More than three times
+                       79,341         .  
+
+----------------------------------------------------------------------
+V93                   Political acition recently done: Joining strikes
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V93
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 83,127/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        2,055         1  Not at all
+                        2,555         2  Once
+                          840         3  Twice
+                          383         4  Three times
+                          605         5  More than three times
+                       83,127         .  
+
+----------------------------------------------------------------------
+V94                              Political action recently done: Other
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V94
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 85,377/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        1,235         1  Not at all
+                        1,819         2  Once
+                          519         3  Twice
+                          272         4  Three times
+                          343         5  More than three times
+                       85,377         .  
+
+----------------------------------------------------------------------
+V95                                Self positioning in political scale
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V95, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 21,366/89
+> ,565
+
+              Examples: 5     
+                        5     
+                        8     
+                        .     
+
+----------------------------------------------------------------------
+V96                                                    Income equality
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V96, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,885/89,
+> 565
+
+              Examples: 2     
+                        5     
+                        6     
+                        9     
+
+----------------------------------------------------------------------
+V97                             Private vs state ownership of business
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V97, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 5,298/89,
+> 565
+
+              Examples: 3     
+                        5     
+                        7     
+                        9     
+
+----------------------------------------------------------------------
+V98                                          Government responsibility
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V98, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,253/89,
+> 565
+
+              Examples: 1     The government should take more responsi
+> bility to ensure tha
+                        3     
+                        5     
+                        8     
+
+----------------------------------------------------------------------
+V99                                        Competition good or harmful
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V99, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 3,154/89,
+> 565
+
+              Examples: 1     Competition is good. It stimulates peopl
+> e to work hard and d
+                        3     
+                        5     
+                        6     
+
+----------------------------------------------------------------------
+V100                                          Hard work brings success
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V100, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,258/89,
+> 565
+
+              Examples: 1     In the long run, hard work usually bring
+> s a better life
+                        3     
+                        5     
+                        7     
+
+----------------------------------------------------------------------
+V101                                               Wealth accumulation
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V101, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 4,602/89,
+> 565
+
+              Examples: 4     
+                        6     
+                        8     
+                        10    Wealth can grow so there´s enough for ev
+> eryone
+
+----------------------------------------------------------------------
+V102                               How much you trust: Your family (B)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V102
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,455/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       73,222         1  Trust completely
+                       12,139         2  Trust somewhat
+                        2,051         3  Do not trust very much
+                          698         4  Do not trust at all
+                        1,455         .  
+
+----------------------------------------------------------------------
+V103                                      Trust: Your neighborhood (B)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V103
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 2,063/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       18,939         1  Trust completely
+                       43,877         2  Trust somewhat
+                       18,620         3  Do not trust very much
+                        6,066         4  Do not trust at all
+                        2,063         .  
+
+----------------------------------------------------------------------
+V104                             Trust: People you know personally (B)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V104
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,955/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       20,861         1  Trust completely
+                       45,727         2  Trust somewhat
+                       15,937         3  Do not trust very much
+                        5,085         4  Do not trust at all
+                        1,955         .  
+
+----------------------------------------------------------------------
+V105                     Trust: People you meet for the first time (B)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V105
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 3,130/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        2,285         1  Trust completely
+                       17,659         2  Trust somewhat
+                       38,164         3  Do not trust very much
+                       28,327         4  Do not trust at all
+                        3,130         .  
+
+----------------------------------------------------------------------
+V106                             Trust: People of another religion (B)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V106
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 6,956/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        4,541         1  Trust completely
+                       29,299         2  Trust somewhat
+                       30,039         3  Do not trust very much
+                       18,730         4  Do not trust at all
+                        6,956         .  
+
+----------------------------------------------------------------------
+V107                          Trust: People of another nationality (B)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V107
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 7,189/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        3,882         1  Trust completely
+                       26,509         2  Trust somewhat
+                       30,425         3  Do not trust very much
+                       21,560         4  Do not trust at all
+                        7,189         .  
+
+----------------------------------------------------------------------
+V108                                              Confidence: Churches
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V108
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 2,927/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       29,568         1  A great deal
+                       26,216         2  Quite a lot
+                       19,853         3  Not very much
+                       11,001         4  None at all
+                        2,927         .  
+
+----------------------------------------------------------------------
+V109                                          Confidence: Armed Forces
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V109
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 4,397/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       22,322         1  A great deal
+                       33,754         2  Quite a lot
+                       20,303         3  Not very much
+                        8,789         4  None at all
+                        4,397         .  
+
+----------------------------------------------------------------------
+V110                                             Confidence: The Press
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V110
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 2,783/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        9,084         1  A great deal
+                       29,141         2  Quite a lot
+                       34,751         3  Not very much
+                       13,806         4  None at all
+                        2,783         .  
+
+----------------------------------------------------------------------
+V111                                            Confidence: Television
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V111
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 2,019/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       11,387         1  A great deal
+                       31,884         2  Quite a lot
+                       32,603         3  Not very much
+                       11,672         4  None at all
+                        2,019         .  
+
+----------------------------------------------------------------------
+V112                                         Confidence: Labour Unions
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V112
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 11,170/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        7,029         1  A great deal
+                       24,791         2  Quite a lot
+                       30,047         3  Not very much
+                       16,528         4  None at all
+                       11,170         .  
+
+----------------------------------------------------------------------
+V113                                            Confidence: The Police
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V113
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 2,078/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       15,410         1  A great deal
+                       33,671         2  Quite a lot
+                       25,348         3  Not very much
+                       13,058         4  None at all
+                        2,078         .  
+
+----------------------------------------------------------------------
+V114                                 Confidence: Justice System/Courts
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V114
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 3,338/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       15,120         1  A great deal
+                       32,007         2  Quite a lot
+                       26,103         3  Not very much
+                       12,997         4  None at all
+                        3,338         .  
+
+----------------------------------------------------------------------
+V115                                        Confidence: The Government
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V115
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 3,178/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       12,409         1  A great deal
+                       27,660         2  Quite a lot
+                       29,634         3  Not very much
+                       16,684         4  None at all
+                        3,178         .  
+
+----------------------------------------------------------------------
+V116                                 Confidence: The Political Parties
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V116
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 6,353/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        5,474         1  A great deal
+                       19,030         2  Quite a lot
+                       34,374         3  Not very much
+                       24,334         4  None at all
+                        6,353         .  
+
+----------------------------------------------------------------------
+V117                                            Confidence: Parliament
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V117
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 4,497/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        8,944         1  A great deal
+                       24,793         2  Quite a lot
+                       31,318         3  Not very much
+                       20,013         4  None at all
+                        4,497         .  
+
+----------------------------------------------------------------------
+V118                                    Confidence: The Civil Services
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V118
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 5,655/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        9,074         1  A great deal
+                       30,911         2  Quite a lot
+                       29,411         3  Not very much
+                       14,514         4  None at all
+                        5,655         .  
+
+----------------------------------------------------------------------
+V119                                          Confidence: Universities
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V119
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 5,372/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       19,312         1  A great deal
+                       39,968         2  Quite a lot
+                       18,145         3  Not very much
+                        6,768         4  None at all
+                        5,372         .  
+
+----------------------------------------------------------------------
+V120                                       Confidence: Major Companies
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V120
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 6,468/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       10,016         1  A great deal
+                       32,015         2  Quite a lot
+                       29,327         3  Not very much
+                       11,739         4  None at all
+                        6,468         .  
+
+----------------------------------------------------------------------
+V121                                                 Confidence: Banks
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V121
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 4,023/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       14,903         1  A great deal
+                       32,818         2  Quite a lot
+                       25,311         3  Not very much
+                       12,510         4  None at all
+                        4,023         .  
+
+----------------------------------------------------------------------
+V122                 Confidence: The Environmental Protection Movement
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V122
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 7,548/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       12,285         1  A great deal
+                       35,435         2  Quite a lot
+                       24,604         3  Not very much
+                        9,693         4  None at all
+                        7,548         .  
+
+----------------------------------------------------------------------
+V123                                  Confidence: The Women´s Movement
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V123
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 9,327/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       12,734         1  A great deal
+                       33,594         2  Quite a lot
+                       23,675         3  Not very much
+                       10,235         4  None at all
+                        9,327         .  
+
+----------------------------------------------------------------------
+V124              Confidence: Charitable or humanitarian organizations
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V124
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 6,829/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       14,754         1  A great deal
+                       35,207         2  Quite a lot
+                       23,327         3  Not very much
+                        9,448         4  None at all
+                        6,829         .  
+
+----------------------------------------------------------------------
+V125_00                                 Confidence: The European Union
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_00
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 73,365/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          969         1  A great deal
+                        6,086         2  Quite a lot
+                        6,458         3  Not very much
+                        2,687         4  None at all
+                       73,365         .  
+
+----------------------------------------------------------------------
+V125_01                                           Confidence: The APEC
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_01
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 85,016/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          297         1  A great deal
+                        2,199         2  Quite a lot
+                        1,733         3  Not very much
+                          320         4  None at all
+                       85,016         .  
+
+----------------------------------------------------------------------
+V125_02                                            Confidence: CARICOM
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_02
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 86,871/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          213         1  A great deal
+                          805         2  Quite a lot
+                          938         3  Not very much
+                          738         4  None at all
+                       86,871         .  
+
+----------------------------------------------------------------------
+V125_03                             Confidence: The Arab Maghreb Union
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_03
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 87,882/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          155         1  A great deal
+                          271         2  Quite a lot
+                          569         3  Not very much
+                          688         4  None at all
+                       87,882         .  
+
+----------------------------------------------------------------------
+V125_04              Confidence: The Organization of the Islamic World
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_04
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 87,625/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          463         1  A great deal
+                          533         2  Quite a lot
+                          508         3  Not very much
+                          436         4  None at all
+                       87,625         .  
+
+----------------------------------------------------------------------
+V125_05                                          Confidence: The NAFTA
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_05
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 85,475/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          220         1  A great deal
+                        1,063         2  Quite a lot
+                        1,906         3  Not very much
+                          901         4  None at all
+                       85,475         .  
+
+----------------------------------------------------------------------
+V125_06                                       Confidence: The Mercosur
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_06
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 85,872/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          228         1  A great deal
+                        1,386         2  Quite a lot
+                        1,249         3  Not very much
+                          830         4  None at all
+                       85,872         .  
+
+----------------------------------------------------------------------
+V125_07                                                Confidence: CIS
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_07
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 79,542/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        1,643         1  A great deal
+                        4,262         2  Quite a lot
+                        2,764         3  Not very much
+                        1,354         4  None at all
+                       79,542         .  
+
+----------------------------------------------------------------------
+V125_08             Confidence: The Organization for African Unity-OAU
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_08
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 78,581/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        1,440         1  A great deal
+                        3,805         2  Quite a lot
+                        3,583         3  Not very much
+                        2,156         4  None at all
+                       78,581         .  
+
+----------------------------------------------------------------------
+V125_09                                Confidence: The Association of
+                                       South East Asian Nations -ASEAN
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_09
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 84,090/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          710         1  A great deal
+                        2,693         2  Quite a lot
+                        1,666         3  Not very much
+                          406         4  None at all
+                       84,090         .  
+
+----------------------------------------------------------------------
+V125_10                   Confidence: Confidence in CER with Australia
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_10
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 88,922/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                           55         1  A great deal
+                          301         2  Quite a lot
+                          244         3  Not very much
+                           43         4  None at all
+                       88,922         .  
+
+----------------------------------------------------------------------
+V125_11          Confidence: The Organization of American States (OAE)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_11
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 88,488/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          166         1  A great deal
+                          321         2  Quite a lot
+                          324         3  Not very much
+                          266         4  None at all
+                       88,488         .  
+
+----------------------------------------------------------------------
+V125_12                                          Confidence: The SAARC
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_12
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 86,461/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          501         1  A great deal
+                          876         2  Quite a lot
+                        1,094         3  Not very much
+                          633         4  None at all
+                       86,461         .  
+
+----------------------------------------------------------------------
+V125_13                                             Confidence: UNASUR
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_13
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 88,506/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          122         1  A great deal
+                          325         2  Quite a lot
+                          308         3  Not very much
+                          304         4  None at all
+                       88,506         .  
+
+----------------------------------------------------------------------
+V125_14                                Confidence: The Free Commerce
+                                       Treaty (Tratado de libre
+                                       comercio)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_14
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 88,373/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          101         1  A great deal
+                          357         2  Quite a lot
+                          480         3  Not very much
+                          254         4  None at all
+                       88,373         .  
+
+----------------------------------------------------------------------
+V125_15                                    Confidence: The Arab League
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_15
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 82,805/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                          420         1  A great deal
+                          953         2  Quite a lot
+                        2,021         3  Not very much
+                        3,366         4  None at all
+                       82,805         .  
+
+----------------------------------------------------------------------
+V125_16                                Confidence: Cooperation Council
+                                       for the Arab states of Gulf
+                                       (GCC)
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_16, but 1 nonmissing value is not labeled
+
+                 Range: [0,4]                         Units: 1
+         Unique values: 5                         Missing .: 79/89,565
+
+            Tabulation: Freq.   Numeric  Label
+                       88,262         0  
+                          311         1  A great deal
+                          400         2  Quite a lot
+                          364         3  Not very much
+                          149         4  None at all
+                           79         .  
+
+----------------------------------------------------------------------
+V125_17                                Confidence: Mainland government
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V125_17, but 1 nonmissing value is not labeled
+
+                 Range: [0,4]                         Units: 1
+         Unique values: 5                         Missing .: 6/89,565
+
+            Tabulation: Freq.   Numeric  Label
+                       88,565         0  
+                           45         1  A great deal
+                          174         2  Quite a lot
+                          444         3  Not very much
+                          331         4  None at all
+                            6         .  
+
+----------------------------------------------------------------------
+V126                                    Confidence: The United Nations
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V126
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 10,838/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        9,136         1  A great deal
+                       27,011         2  Quite a lot
+                       24,376         3  Not very much
+                       18,204         4  None at all
+                       10,838         .  
+
+----------------------------------------------------------------------
+V127                          Political system: Having a strong leader
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V127
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 8,051/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       14,016         1  Very good
+                       23,674         2  Fairly good
+                       22,113         3  Bad
+                       21,711         4  Very bad
+                        8,051         .  
+
+----------------------------------------------------------------------
+V128                   Political system: Having experts make decisions
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V128
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 8,969/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       15,000         1  Very good
+                       33,001         2  Fairly good
+                       21,743         3  Fairly bad
+                       10,852         4  Very bad
+                        8,969         .  
+
+----------------------------------------------------------------------
+V129                            Political system: Having the army rule
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V129
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 9,957/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        6,232         1  Very good
+                       14,239         2  Fairly good
+                       25,895         3  Fairly bad
+                       33,242         4  Very bad
+                        9,957         .  
+
+----------------------------------------------------------------------
+V130            Political system: Having a democratic political system
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V130
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 6,566/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       39,695         1  Very good
+                       33,036         2  Fairly good
+                        7,286         3  Fairly bad
+                        2,982         4  Very bad
+                        6,566         .  
+
+----------------------------------------------------------------------
+V131       Democracy: Governments tax the rich and subsidize the poor.
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V131, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 3,794/89,
+> 565
+
+              Examples: 3     
+                        6     
+                        8     
+                        10    An essential characteristic of democracy
+
+----------------------------------------------------------------------
+V132              Democracy: Religious authorities interpret the laws.
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V132, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 5,802/89,
+> 565
+
+              Examples: 1     Not an essential characteristic of democ
+> racy
+                        3     
+                        5     
+                        8     
+
+----------------------------------------------------------------------
+V133         Democracy: People choose their leaders in free elections.
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V133, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 3,366/89,
+> 565
+
+              Examples: 6     
+                        8     
+                        10    An essential characteristic of democracy
+                        10    An essential characteristic of democracy
+
+----------------------------------------------------------------------
+V134             Democracy: People receive state aid for unemployment.
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V134, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 3,374/89,
+> 565
+
+              Examples: 5     
+                        7     
+                        8     
+                        10    An essential characteristic of democracy
+
+----------------------------------------------------------------------
+V135    Democracy: The army takes over when government is incompetent.
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V135, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 7,319/89,
+> 565
+
+              Examples: 1     Not an essential characteristic of democ
+> racy
+                        3     
+                        6     
+                        9     
+
+----------------------------------------------------------------------
+V136                                   Democracy: Civil rights protect
+                                       people’s liberty against
+                                       oppression.
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V136, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 5,251/89,
+> 565
+
+              Examples: 5     
+                        7     
+                        9     
+                        10    An essential characteristic of democracy
+
+----------------------------------------------------------------------
+V137                 Democracy: The state makes people's incomes equal
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V137, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 4,123/89,
+> 565
+
+              Examples: 3     
+                        5     
+                        8     
+                        10    An essential characteristic of democracy
+
+----------------------------------------------------------------------
+V138                               Democracy: People obey their rulers
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V138, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 4,677/89,
+> 565
+
+              Examples: 3     
+                        5     
+                        8     
+                        10    An essential characteristic of democracy
+
+----------------------------------------------------------------------
+V139                     Democracy: Women have the same rights as men.
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V139, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,837/89,
+> 565
+
+              Examples: 6     
+                        8     
+                        10    An essential characteristic of democracy
+                        10    An essential characteristic of democracy
+
+----------------------------------------------------------------------
+V152                                 How important is God in your life
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V152, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 4,886/89,
+> 565
+
+              Examples: 5     
+                        8     
+                        10    Very important
+                        10    Very important
+
+----------------------------------------------------------------------
+V153                                   Whenever science and religion
+                                       conflict, religion is always
+                                       right
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V153
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 8,697/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       22,020         1  Strongly agree
+                       20,317         2  Agree
+                       23,961         3  Disagree
+                       14,570         4  Strongly disagree
+                        8,697         .  
+
+----------------------------------------------------------------------
+V154                      The only acceptable religion  is my religion
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V154
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 9,759/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       20,406         1  Strongly agree
+                       18,133         2  Agree
+                       24,862         3  Disagree
+                       16,405         4  Strongly disagree
+                        9,759         .  
+
+----------------------------------------------------------------------
+V155                  All religions should be taught in public schools
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V155
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 8,128/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       13,811         1  Strongly agree
+                       25,765         2  Agree
+                       23,793         3  Disagree
+                       18,068         4  Strongly disagree
+                        8,128         .  
+
+----------------------------------------------------------------------
+V156                                   People who belong to different
+                                       religions are probably just as
+                                       moral as those who
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V156
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 12,414/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                       18,159         1  Strongly agree
+                       37,249         2  Agree
+                       14,387         3  Disagree
+                        7,356         4  Strongly disagree
+                       12,414         .  
+
+----------------------------------------------------------------------
+V157                              Social position: People in their 20s
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V157, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 8,548/89,
+> 565
+
+              Examples: 3     
+                        5     
+                        6     
+                        8     
+
+----------------------------------------------------------------------
+V158                              Social position: People in their 40s
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V158, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 8,200/89,
+> 565
+
+              Examples: 5     
+                        7     
+                        8     
+                        9     
+
+----------------------------------------------------------------------
+V159                              Social position: People in their 70s
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V159, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 8,568/89,
+> 565
+
+              Examples: 3     
+                        5     
+                        7     
+                        9     
+
+----------------------------------------------------------------------
+V160                                  Is a 30-year old boss acceptable
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V160, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 6,697/89,
+> 565
+
+              Examples: 5     
+                        7     
+                        8     
+                        10    Completely acceptable
+
+----------------------------------------------------------------------
+V161                              People over 70: are seen as friendly
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V161, but 3 nonmissing values are not labeled
+
+                 Range: [0,4]                         Units: 1
+         Unique values: 5                         Missing .: 8,038/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        3,634         0  Not at all likely to be seen
+                                         like this
+                        7,650         1  
+                       17,892         2  
+                       27,440         3  
+                       24,911         4  Very likely to be viewed that
+                                         way
+                        8,038         .  
+
+----------------------------------------------------------------------
+V162                             People over 70: are seen as competent
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V162, but 3 nonmissing values are not labeled
+
+                 Range: [0,4]                         Units: 1
+         Unique values: 5                         Missing .: 8,637/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        5,583         0  Not at all likely to be seen
+                                         like this
+                       11,121         1  
+                       21,685         2  
+                       24,037         3  
+                       18,502         4  Very likely to be viewed that
+                                         way
+                        8,637         .  
+
+----------------------------------------------------------------------
+V163                               People over 70: viewed with respect
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V163, but 3 nonmissing values are not labeled
+
+                 Range: [0,4]                         Units: 1
+         Unique values: 5                         Missing .: 7,396/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        2,225         0  Not at all likely to be seen
+                                         like this
+                        5,652         1  
+                       13,605         2  
+                       25,232         3  
+                       35,455         4  Very likely to be viewed that
+                                         way
+                        7,396         .  
+
+----------------------------------------------------------------------
+V164                                  Is a 70-year old boss acceptable
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V164, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 7,214/89,
+> 565
+
+              Examples: 4     
+                        6     
+                        8     
+                        9     
+
+----------------------------------------------------------------------
+V165                    Older people are not respected much these days
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V165
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 5,950/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       15,626         1  Strongly agree
+                       33,885         2  Agree
+                       24,364         3  Disagree
+                        9,740         4  Strongly disagree
+                        5,950         .  
+
+----------------------------------------------------------------------
+V166   Older people get more than their fair share from the government
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V166
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 8,882/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        5,659         1  Strongly agree
+                       16,734         2  Agree
+                       35,978         3  Disagree
+                       22,312         4  Strongly disagree
+                        8,882         .  
+
+----------------------------------------------------------------------
+V167                              Older people are a burden on society
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V167
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 6,658/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        3,634         1  Strongly agree
+                       10,726         2  Agree
+                       37,038         3  Disagree
+                       31,509         4  Strongly disagree
+                        6,658         .  
+
+----------------------------------------------------------------------
+V168                                   Companies that employ young
+                                       people perform better than
+                                       those that employ people
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V168
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 9,745/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       10,159         1  Strongly agree
+                       24,551         2  Agree
+                       32,364         3  Disagree
+                       12,746         4  Strongly disagree
+                        9,745         .  
+
+----------------------------------------------------------------------
+V169                      Old people have too much political influence
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V169
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 10,835/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                       10,393         1  Strongly agree
+                       26,653         2  Agree
+                       30,704         3  Disagree
+                       10,980         4  Strongly disagree
+                       10,835         .  
+
+----------------------------------------------------------------------
+V170                                            Secure in neighborhood
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V170
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,844/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       29,830         1  Very Secure
+                       40,607         2  Quite secure
+                       13,351         3  Not very secure
+                        3,933         4  Not at all secure
+                        1,844         .  
+
+----------------------------------------------------------------------
+V171                         Frequency in your neighborhood: Robberies
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V171
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 4,289/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        5,516         1  Very Frequently
+                       13,511         2  Quite frequently
+                       29,008         3  Not frequently
+                       37,241         4  Not at all frequently
+                        4,289         .  
+
+----------------------------------------------------------------------
+V172   Frequency in your neighborhood: Alcohol consumed in the streets
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V172
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 4,952/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       10,931         1  Very Frequently
+                       18,111         2  Quite frequently
+                       23,548         3  Not frequently
+                       32,023         4  Not at all frequently
+                        4,952         .  
+
+----------------------------------------------------------------------
+V173                                   Frequency in your neighborhood:
+                                       Police or military interfere
+                                       with people’s pri
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V173
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 7,486/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        2,550         1  Very Frequently
+                        7,127         2  Quite frequently
+                       21,418         3  Not frequently
+                       50,984         4  Not at all frequently
+                        7,486         .  
+
+----------------------------------------------------------------------
+V174                   Frequency in your neighborhood: Racist behavior
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V174
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 9,990/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        2,537         1  Very Frequently
+                        6,198         2  Quite frequently
+                       16,846         3  Not frequently
+                       53,994         4  Not at all frequently
+                        9,990         .  
+
+----------------------------------------------------------------------
+V175              Frequency in your neighborhood: Drug sale in streets
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V175
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 13,495/89
+> ,565
+
+            Tabulation: Freq.   Numeric  Label
+                        5,962         1  Very Frequently
+                        8,418         2  Quite frequently
+                       13,875         3  Not frequently
+                       47,815         4  Not at all frequently
+                       13,495         .  
+
+----------------------------------------------------------------------
+V181                       Worries: Losing my job or not finding a job
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V181
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 5,536/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       36,582         1  Very much
+                       19,113         2  A great deal
+                       13,476         3  Not much
+                       14,858         4  Not at all
+                        5,536         .  
+
+----------------------------------------------------------------------
+V182   Worries: Not being able to give one's children a good education
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V182
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 6,991/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       36,233         1  Very much
+                       21,547         2  A great deal
+                       11,679         3  Not much
+                       13,115         4  Not at all
+                        6,991         .  
+
+----------------------------------------------------------------------
+V183                               Worries: A war involving my country
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V183
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 3,242/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       35,588         1  Very much
+                       20,591         2  A great deal
+                       16,547         3  Not much
+                       13,597         4  Not at all
+                        3,242         .  
+
+----------------------------------------------------------------------
+V184                                       Worries: A terrorist attack
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V184
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 3,242/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       36,223         1  Very much
+                       19,873         2  A great deal
+                       16,988         3  Not much
+                       13,239         4  Not at all
+                        3,242         .  
+
+----------------------------------------------------------------------
+V185                                              Worries: A civil war
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V185
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 7,532/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       31,489         1  Very much
+                       17,156         2  A great deal
+                       15,899         3  Not much
+                       17,489         4  Not at all
+                        7,532         .  
+
+----------------------------------------------------------------------
+V186      Worries: Government wire-tapping or reading my mail or email
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V186
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 8,311/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                       22,073         1  Very much
+                       15,606         2  A great deal
+                       19,153         3  Not much
+                       24,422         4  Not at all
+                        8,311         .  
+
+----------------------------------------------------------------------
+V188                                   Frequency you/family (last 12
+                                       month): Gone without enough
+                                       food to eat
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V188
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,323/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        3,856         1  Often
+                       11,065         2  Sometimes
+                       15,480         3  Rarely
+                       57,841         4  Never
+                        1,323         .  
+
+----------------------------------------------------------------------
+V189                                   Frequency you/family (last 12
+                                       month): Felt unsafe from crime
+                                       in your own home
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V189
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,770/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        4,100         1  Often
+                       11,490         2  Sometimes
+                       16,582         3  Rarely
+                       55,623         4  Never
+                        1,770         .  
+
+----------------------------------------------------------------------
+V190                                   Frequency you/family (last 12
+                                       month): Gone without needed
+                                       medicine or treatment
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V190
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,650/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        4,676         1  Often
+                       13,176         2  Sometimes
+                       16,881         3  Rarely
+                       53,182         4  Never
+                        1,650         .  
+
+----------------------------------------------------------------------
+V191                                   Frequency you/family (last 12
+                                       month): Gone without a cash
+                                       income
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V191
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 1,648/89,
+> 565
+
+            Tabulation: Freq.   Numeric  Label
+                        8,612         1  Often
+                       18,148         2  Sometimes
+                       18,210         3  Rarely
+                       42,947         4  Never
+                        1,648         .  
+
+----------------------------------------------------------------------
+V192                                   Science and technology are
+                                       making our lives healthier,
+                                       easier, and more comforta
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V192, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,892/89,
+> 565
+
+              Examples: 6     
+                        8     
+                        9     
+                        10    Completely agree
+
+----------------------------------------------------------------------
+V193                                   Because of science and
+                                       technology, there will be more
+                                       opportunities for the next
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V193, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 3,186/89,
+> 565
+
+              Examples: 6     
+                        8     
+                        9     
+                        10    Completely agree
+
+----------------------------------------------------------------------
+V194             We depend too much on science and not enough on faith
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V194, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 4,738/89,
+> 565
+
+              Examples: 3     
+                        5     
+                        7     
+                        9     
+
+----------------------------------------------------------------------
+V195                                   One of the bad effects of
+                                       science is that it breaks down
+                                       people’s ideas of rig
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V195, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 6,531/89,
+> 565
+
+              Examples: 3     
+                        5     
+                        7     
+                        9     
+
+----------------------------------------------------------------------
+V196                                   It is not important for me to
+                                       know about science in my daily
+                                       life
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V196, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 3,596/89,
+> 565
+
+              Examples: 2     
+                        4     
+                        6     
+                        8     
+
+----------------------------------------------------------------------
+V197                                   The world is better off, or
+                                       worse off, because of science
+                                       and technology
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V197, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,745/89,
+> 565
+
+              Examples: 5     
+                        7     
+                        8     
+                        10    A lot better off
+
+----------------------------------------------------------------------
+V198                                   Justifiable: Claiming
+                                       government benefits to which
+                                       you are not entitled
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V198, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,460/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        2     
+                        5     
+
+----------------------------------------------------------------------
+V199                  Justifiable: Avoiding a fare on public transport
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V199, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 1,749/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        2     
+                        5     
+
+----------------------------------------------------------------------
+V200                                    Justifiable: Stealing property
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V200, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 1,390/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        1     Never justifiable
+                        2     
+
+----------------------------------------------------------------------
+V201                                    Justifiable: Cheating on taxes
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V201, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 5,203/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        2     
+                        4     
+
+----------------------------------------------------------------------
+V202                            Justifiable: Someone accepting a bribe
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V202, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 1,731/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        1     Never justifiable
+                        3     
+
+----------------------------------------------------------------------
+V203                                        Justifiable: Homosexuality
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V203, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 7,386/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        4     
+                        8     
+
+----------------------------------------------------------------------
+V203A                                        Justifiable: Prostitution
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V203A, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 25,230/89
+> ,565
+
+              Examples: 1     Never justifiable
+                        2     
+                        5     
+                        .     
+
+----------------------------------------------------------------------
+V204                                             Justifiable: Abortion
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V204, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 4,648/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        4     
+                        6     
+
+----------------------------------------------------------------------
+V205                                              Justifiable: Divorce
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V205, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,600/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        3     
+                        5     
+                        8     
+
+----------------------------------------------------------------------
+V206                                  Justifiable: Sex before marriage
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V206, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 12,493/89
+> ,565
+
+              Examples: 1     Never justifiable
+                        4     
+                        7     
+                        10    Always justifiable
+
+----------------------------------------------------------------------
+V207                                              Justifiable: Suicide
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V207, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 2,684/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        1     Never justifiable
+                        4     
+
+----------------------------------------------------------------------
+V207A                                          Justifiable: Euthanasia
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V207A, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 48,312/89
+> ,565
+
+              Examples: 1     Never justifiable
+                        8     
+                        .     
+                        .     
+
+----------------------------------------------------------------------
+V208                           Justifiable: For a man to beat his wife
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V208, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 1,474/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        1     Never justifiable
+                        3     
+
+----------------------------------------------------------------------
+V209                             Justifiable: Parents beating children
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V209, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 1,455/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        3     
+                        5     
+
+----------------------------------------------------------------------
+V210                        Justifiable: Violence against other people
+----------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: V210, but 8 nonmissing values are not labeled
+
+                 Range: [1,10]                        Units: 1
+         Unique values: 10                        Missing .: 1,501/89,
+> 565
+
+              Examples: 1     Never justifiable
+                        1     Never justifiable
+                        1     Never justifiable
+                        3     
+
+. 
+. //Recoding negative values into missing values
+.         qui ds, has(type numeric)
+
+.         cap confirm variable `r(varlist)'
+
+.         if _rc == 0 foreach v of varlist `r(varlist)' {
+  2.                 replace `v' = . if `v' < 0
+  3.         }       
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+
+.         
+. //Collapsing 
+.         foreach v of var `r(varlist)' {
+  2.                 local l`v' : variable label `v'
+  3.         if `"`l`v''"' == "" {
+  4.                 local l`v' "`v'"
+  5.                 }
+  6.         }
+
+.         
+.         collapse (first) COW (mean) V4-V11 V49-V56 V59 V70-V79 V90-V
+> 139 V152-V169 ///
+>                                         V170-V175 V181-V186 V188-V19
+> 1 V192-V197 V198-V210, by(V2)
+
+.         
+.         qui ds, has(type numeric)
+
+.         foreach v of var `r(varlist)' {
+  2.                 la var `v' `"`l`v''"'
+  3.         }
+
+.         
+. //Dropping the variables that have missing values(all countries must
+>  have data for the variables included)
+.         qui missings report
+
+.         drop `r(varlist)'
+
+.         drop V125_* // not all countries have this
+
+. 
+.         
+. //Generating string country variables for transposing the data
+.         decode V2, gen(country)
+
+.         order country, first
+
+.         replace country = subinstr(country, " ", "", .)
+(7 real changes made)
+
+.         replace country = "TrinidadTobago" if country == "Trinidadan
+> dTobago"
+(1 real change made)
+
+.         rename V2 countryID
+
+.         
+. //Saving the data
+.         save "$outputpath/WV6_Data_NON_NOR.dta", replace 
+(file Analysis/Data/WV6_Data_NON_NOR.dta not found)
+file Analysis/Data/WV6_Data_NON_NOR.dta saved
+
+.         
+. //Generating normalized variables
+.         ds, has(type float)
+V4    V49   V71   V96   V111  V122  V136  V171  V189  V197  V209
+V5    V51   V72   V97   V113  V123  V137  V173  V190  V198  V210
+V6    V52   V73   V98   V114  V124  V138  V174  V191  V199
+V7    V53   V75   V99   V115  V126  V139  V181  V192  V200
+V8    V54   V76   V100  V117  V131  V153  V182  V193  V202
+V9    V55   V77   V101  V119  V132  V155  V183  V194  V205
+V10   V59   V78   V108  V120  V133  V156  V184  V195  V207
+V11   V70   V79   V110  V121  V134  V170  V188  V196  V208
+
+.         foreach v of varlist `r(varlist)' {
+  2.                 tempvar meanvar
+  3.                 tempvar sdvar
+  4.                 egen `meanvar' = mean(`v')
+  5.                 egen `sdvar' = sd(`v')
+  6.                 replace `v' = (`v'-`meanvar')/`sdvar'
+  7.                 la var `v' `"`l`v'' (Normalized)"'
+  8.         }
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+note: label truncated to 80 characters
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+(60 real changes made)
+
+.         cap drop __*
+
+.         
+. //Saving the data with the normalized variables
+.         save "$outputpath/WV6_Data_NOR.dta", replace 
+(file Analysis/Data/WV6_Data_NOR.dta not found)
+file Analysis/Data/WV6_Data_NOR.dta saved
+
+.         
+. log close 
+      name:  <unnamed>
+       log:  /Users/gizemkilicgedik/Desktop/AppliedEmpirical/task_3/da
+> tacleaning.log
+  log type:  text
+ closed on:  20 Sep 2023, 08:52:56
+----------------------------------------------------------------------
